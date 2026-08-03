@@ -1,0 +1,18 @@
+@import url('variables.css');
+@import url('reset.css');
+
+@import url('layout.css');
+
+@import url('sidebar.css');
+@import url('header.css');
+@import url('dashboard.css');
+@import url('cards.css');
+
+@import url('forms.css');
+@import url('incidentForm.css');
+@import url('buttons.css');
+@import url('modal.css');
+
+@import url('auditTable.css');
+
+@import url('responsive.css');
