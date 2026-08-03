@@ -1,0 +1,475 @@
+/* ==========================================================
+   Yard Guardian
+   Sidebar v2.0
+   Part 1 - Structure & Branding
+========================================================== */
+
+/* ==========================================================
+   SIDEBAR
+========================================================== */
+
+.sidebar {
+
+    grid-area: sidebar;
+
+    width: var(--sidebar-width);
+    height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    background: var(--color-sidebar);
+
+    border-right: 1px solid var(--color-border);
+
+    overflow: hidden;
+
+}
+
+/* ==========================================================
+   TOP
+========================================================== */
+
+.sidebar__top {
+
+    padding: 20px 24px;
+
+}
+
+/* ==========================================================
+   BRAND
+========================================================== */
+
+.sidebar__brand {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    margin-bottom: 30px;
+
+}
+
+/* ==========================================================
+   LOGO
+========================================================== */
+
+.sidebar__brand-logo {
+
+    width: 210px;
+
+    height: auto;
+
+    object-fit: contain;
+
+    display: block;
+
+    margin-bottom: 10px;
+
+    transition: .3s;
+
+}
+
+/* ==========================================================
+   TITLE
+========================================================== */
+
+.sidebar__brand-title {
+
+    font-family: var(--font-brand);
+
+    font-size: 54px;
+
+    font-weight: 400;
+
+    line-height: .88;
+
+    letter-spacing: 2px;
+
+    text-align: center;
+
+    color: white;
+
+    text-transform: uppercase;
+
+}
+
+/* ==========================================================
+   ORANGE TITLE
+========================================================== */
+
+.sidebar__brand-title span {
+
+    display: block;
+
+    color: var(--color-primary);
+
+    font-size: 42px;
+
+    letter-spacing: 3px;
+
+}
+
+/* ==========================================================
+   SUBTITLE
+========================================================== */
+
+.sidebar__brand-subtitle {
+
+    margin-top: 12px;
+
+    color: var(--color-text-muted);
+
+    font-size: 12px;
+
+    letter-spacing: 2px;
+
+    text-transform: uppercase;
+
+    text-align: center;
+
+}
+
+/* ==========================================================
+   MENU
+========================================================== */
+
+.sidebar__menu {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 8px;
+
+}
+/* ==========================================================
+   MENU ITEMS
+========================================================== */
+
+.sidebar__item {
+
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    gap: 16px;
+
+    width: 100%;
+    height: 56px;
+
+    padding: 0 18px;
+
+    border-radius: 14px;
+
+    color: var(--color-text-secondary);
+
+    text-decoration: none;
+
+    cursor: pointer;
+
+    transition: all .25s ease;
+
+}
+
+/* ==========================================================
+   ICONS
+========================================================== */
+
+.sidebar__item svg {
+
+    width: 22px;
+    height: 22px;
+
+    stroke-width: 2;
+
+    flex-shrink: 0;
+
+    transition: .25s;
+
+}
+
+/* ==========================================================
+   TEXT
+========================================================== */
+
+.sidebar__item span {
+
+    font-family: var(--font-primary);
+
+    font-size: 15px;
+
+    font-weight: 500;
+
+    transition: .25s;
+
+}
+
+/* ==========================================================
+   HOVER
+========================================================== */
+
+.sidebar__item:hover {
+
+    background: rgba(255,255,255,.04);
+
+    color: white;
+
+    transform: translateX(4px);
+
+}
+
+.sidebar__item:hover svg{
+
+    color: var(--color-primary);
+
+}
+
+/* ==========================================================
+   ACTIVE
+========================================================== */
+
+.sidebar__item.active{
+
+    background: linear-gradient(
+        90deg,
+        rgba(255,122,0,.20),
+        rgba(255,122,0,.05)
+    );
+
+    color: var(--color-primary);
+
+    font-weight: 600;
+
+}
+
+/* Barra naranja */
+
+.sidebar__item.active::before{
+
+    content:"";
+
+    position:absolute;
+
+    left:-24px;
+
+    width:5px;
+
+    height:32px;
+
+    border-radius:20px;
+
+    background:var(--color-primary);
+
+}
+
+/* ==========================================================
+   ACTIVE ICON
+========================================================== */
+
+.sidebar__item.active svg{
+
+    color:var(--color-primary);
+
+}
+
+/* ==========================================================
+   ACTIVE TEXT
+========================================================== */
+
+.sidebar__item.active span{
+
+    font-weight:600;
+
+}
+
+/* ==========================================================
+   MENU SPACING
+========================================================== */
+
+.sidebar__menu{
+
+    margin-top:12px;
+
+}
+
+/* ==========================================================
+   DIVIDER
+========================================================== */
+
+.sidebar__divider{
+
+    width:100%;
+
+    height:1px;
+
+    background:var(--color-divider);
+
+    margin:30px 0;
+
+}
+/* ==========================================================
+   FOOTER
+========================================================== */
+
+.sidebar__footer {
+
+    padding: 24px;
+
+}
+
+/* ==========================================================
+   SHIFT CARD
+========================================================== */
+
+.sidebar__shift {
+
+    background: linear-gradient(
+        180deg,
+        #1A2432 0%,
+        #182230 100%
+    );
+
+    border: 1px solid rgba(255,255,255,.05);
+
+    border-radius: 18px;
+
+    padding: 22px;
+
+    box-shadow:
+        0 12px 30px rgba(0,0,0,.30);
+
+}
+
+/* ==========================================================
+   SHIFT LABEL
+========================================================== */
+
+.sidebar__shift-label {
+
+    font-size: 11px;
+
+    font-weight: 600;
+
+    color: var(--color-text-muted);
+
+    letter-spacing: 1.5px;
+
+    text-transform: uppercase;
+
+    margin-bottom: 16px;
+
+}
+
+/* ==========================================================
+   SHIFT NAME
+========================================================== */
+
+.sidebar__shift-name {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    font-size: 22px;
+
+    font-weight: 700;
+
+    color: white;
+
+    margin-bottom: 10px;
+
+}
+
+.sidebar__shift-name svg {
+
+    width: 22px;
+
+    height: 22px;
+
+    color: var(--color-warning);
+
+}
+
+/* ==========================================================
+   SHIFT HOURS
+========================================================== */
+
+.sidebar__shift-hours {
+
+    color: var(--color-text-muted);
+
+    font-size: 15px;
+
+    margin-bottom: 24px;
+
+}
+
+/* ==========================================================
+   BUTTON
+========================================================== */
+
+.sidebar__button {
+
+    width: 100%;
+
+    height: 50px;
+
+    border: none;
+
+    border-radius: 12px;
+
+    background: linear-gradient(
+        180deg,
+        #FF8B17,
+        #FF7A00
+    );
+
+    color: white;
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: .25s;
+
+    box-shadow:
+        0 8px 18px rgba(255,122,0,.25);
+
+}
+
+/* ==========================================================
+   BUTTON HOVER
+========================================================== */
+
+.sidebar__button:hover {
+
+    transform: translateY(-2px);
+
+    background: linear-gradient(
+        180deg,
+        #FF9B34,
+        #FF8817
+    );
+
+    box-shadow:
+        0 14px 30px rgba(255,122,0,.35);
+
+}
+
+/* ==========================================================
+   BUTTON ACTIVE
+========================================================== */
+
+.sidebar__button:active {
+
+    transform: scale(.98);
+
+}

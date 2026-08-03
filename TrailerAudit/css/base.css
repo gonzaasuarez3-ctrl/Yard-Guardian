@@ -1,0 +1,6 @@
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:inherit}
+h1,h2,h3{font-weight:600}
+label{display:block;margin-bottom:.35rem;color:var(--muted)}
+input,select,textarea{width:100%;padding:.8rem;border:1px solid var(--border);border-radius:var(--radius);background:#0b1220;color:var(--text)}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--primary)}

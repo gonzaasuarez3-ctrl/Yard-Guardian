@@ -1,0 +1,240 @@
+/* ==========================================================
+   Yard Guardian
+   Reset & Base Styles
+   Version: 0.4.0
+========================================================== */
+
+/* ===========================
+   RESET
+=========================== */
+
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ===========================
+   HTML
+=========================== */
+
+html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+}
+
+/* ===========================
+   BODY
+=========================== */
+
+body {
+
+    font-family: var(--font-family);
+
+    font-size: var(--font-size-md);
+
+    font-weight: var(--font-weight-normal);
+
+    background: var(--color-background);
+
+    color: var(--color-text);
+
+    line-height: 1.5;
+
+    overflow-x: hidden;
+
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
+}
+
+/* ===========================
+   LINKS
+=========================== */
+
+a {
+
+    color: inherit;
+
+    text-decoration: none;
+
+}
+
+/* ===========================
+   LISTS
+=========================== */
+
+ul,
+ol {
+
+    list-style: none;
+
+}
+
+/* ===========================
+   IMAGES
+=========================== */
+
+img,
+picture {
+
+    display: block;
+
+    max-width: 100%;
+
+}
+
+/* ===========================
+   BUTTONS
+=========================== */
+
+button {
+
+    border: none;
+
+    background: none;
+
+    font: inherit;
+
+    color: inherit;
+
+    cursor: pointer;
+
+}
+
+/* ===========================
+   FORM ELEMENTS
+=========================== */
+
+input,
+textarea,
+select {
+
+    font: inherit;
+
+    color: inherit;
+
+    border: none;
+
+    outline: none;
+
+    background: transparent;
+
+}
+
+/* ===========================
+   TABLES
+=========================== */
+
+table {
+
+    border-collapse: collapse;
+
+    border-spacing: 0;
+
+}
+
+/* ===========================
+   HEADINGS
+=========================== */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+
+    font-weight: var(--font-weight-semibold);
+
+    line-height: 1.2;
+
+}
+
+/* ===========================
+   PARAGRAPHS
+=========================== */
+
+p {
+
+    color: var(--color-text-secondary);
+
+}
+
+/* ===========================
+   SCROLLBAR
+=========================== */
+
+::-webkit-scrollbar {
+
+    width: 10px;
+
+}
+
+::-webkit-scrollbar-track {
+
+    background: var(--color-surface);
+
+}
+
+::-webkit-scrollbar-thumb {
+
+    background: var(--color-border);
+
+    border-radius: 999px;
+
+}
+
+::-webkit-scrollbar-thumb:hover {
+
+    background: var(--color-primary);
+
+}
+
+/* Firefox */
+
+* {
+
+    scrollbar-width: thin;
+
+    scrollbar-color:
+        var(--color-border)
+        var(--color-surface);
+
+}
+
+/* ===========================
+   TEXT SELECTION
+=========================== */
+
+::selection {
+
+    background: var(--color-primary);
+
+    color: white;
+
+}
+
+/* ===========================
+   FOCUS
+=========================== */
+
+:focus-visible {
+
+    outline: 2px solid var(--color-primary);
+
+    outline-offset: 3px;
+
+}
+
+/* ===========================
+   ROOT
+=========================== */
+
+#root {
+
+    min-height: 100vh;
+
+}
