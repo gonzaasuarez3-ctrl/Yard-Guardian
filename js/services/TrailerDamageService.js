@@ -1,4 +1,4 @@
-import { collection, onSnapshot, query, orderBy, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { collection, onSnapshot, query, orderBy, doc, setDoc, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { db, authReady } from "./FirebaseService.js";
 import { showErrorBanner } from "../components/ErrorBanner.js";
 
@@ -50,5 +50,26 @@ export async function importTrailerDamage(record) {
     await authReady;
 
     await setDoc(doc(db, "trailerDamages", record.recordKey), record);
+
+}
+
+/**
+ * See clearAllIssues() in IssueService.js for why this exists —
+ * re-importing never removes records from a previous, differently-matched
+ * import on its own.
+ */
+export async function clearAllTrailerDamages() {
+
+    await authReady;
+
+    const snapshot = await getDocs(collection(db, "trailerDamages"));
+
+    const batch = writeBatch(db);
+
+    snapshot.forEach(docSnap => batch.delete(docSnap.ref));
+
+    await batch.commit();
+
+    return snapshot.size;
 
 }

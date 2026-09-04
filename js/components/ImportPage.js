@@ -1,8 +1,8 @@
 import { parseCsvFile, extractAuditRounds, extractTrailerDamages, extractWorkIds, extractIssues } from "../services/ImportService.js";
 import { importSession, isImportKeyUsed } from "../services/AuditSessionService.js";
-import { importTrailerDamage } from "../services/TrailerDamageService.js";
-import { importWorkId } from "../services/WorkIdService.js";
-import { importIssue } from "../services/IssueService.js";
+import { importTrailerDamage, clearAllTrailerDamages } from "../services/TrailerDamageService.js";
+import { importWorkId, clearAllWorkIds } from "../services/WorkIdService.js";
+import { importIssue, clearAllIssues } from "../services/IssueService.js";
 import { Table } from "./table.js";
 
 let detectedRounds = [];
@@ -33,6 +33,23 @@ export function ImportPage() {
             </div>
 
             <div id="importPreviewContainer"></div>
+
+            <div class="dashboard__panel" style="margin-top:24px; border-color: rgba(239, 68, 68, .25);">
+
+                <div class="dashboard__panel-header">
+                    <span class="dashboard__panel-title">Danger Zone</span>
+                    <span class="dashboard__panel-subtitle">Wipe CSV-derived data — useful after a matching-logic change leaves stale records behind</span>
+                </div>
+
+                <p id="clearStatus" style="color:var(--color-text-muted); font-size:var(--text-sm); margin: 8px 0 16px 0;"></p>
+
+                <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                    <button class="btn btn-secondary" id="clearIssuesButton">Clear all Issues</button>
+                    <button class="btn btn-secondary" id="clearDamagesButton">Clear all Trailer Damage</button>
+                    <button class="btn btn-secondary" id="clearWorkIdsButton">Clear all Work IDs</button>
+                </div>
+
+            </div>
 
         </section>
 
@@ -90,6 +107,48 @@ export function initImportPage() {
     if (detectedRounds.length > 0 || detectedDamages.length > 0 || detectedWorkIds.length > 0 || detectedIssues.length > 0) {
 
         renderPreview();
+
+    }
+
+    document.getElementById("clearIssuesButton")?.addEventListener("click", () =>
+        handleClear("Issues", clearAllIssues)
+    );
+
+    document.getElementById("clearDamagesButton")?.addEventListener("click", () =>
+        handleClear("Trailer Damage", clearAllTrailerDamages)
+    );
+
+    document.getElementById("clearWorkIdsButton")?.addEventListener("click", () =>
+        handleClear("Work IDs", clearAllWorkIds)
+    );
+
+}
+
+function setClearStatus(message) {
+
+    const status = document.getElementById("clearStatus");
+
+    if (status) status.textContent = message;
+
+}
+
+async function handleClear(label, clearFn) {
+
+    if (!confirm(`Delete every ${label} record? This can't be undone — you can re-import from a CSV afterward.`)) return;
+
+    setClearStatus(`Deleting ${label}...`);
+
+    try {
+
+        const count = await clearFn();
+
+        setClearStatus(`Deleted ${count} ${label} record(s).`);
+
+    } catch (error) {
+
+        console.error(`Failed to clear ${label}:`, error);
+
+        setClearStatus(`Couldn't delete ${label} — check your connection and try again.`);
 
     }
 

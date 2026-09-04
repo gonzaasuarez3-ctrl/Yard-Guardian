@@ -152,6 +152,12 @@ comment doesn't count, and a comment mentioning "Audit" on some other event
 type doesn't either. Clicking any KPI card opens a detail list — the click
 target is anywhere on the card.
 
+Re-importing does **not** clean up records from a previous import that no
+longer match the current logic — a matching-logic change only affects new
+imports, not what's already saved. The Import page has a "Danger Zone" with
+a button per collection (Issues / Trailer Damage / Work IDs) to wipe it and
+start over from a fresh import.
+
 ## Weekly Report
 
 A second view (sidebar → **Weekly**) rolls up the same data over a
