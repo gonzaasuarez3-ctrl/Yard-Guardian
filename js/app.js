@@ -3,6 +3,7 @@ import { Header } from "./components/Header.js";
 import { Dashboard, initDashboard } from "./components/Dashboard.js";
 import { AuditSessionPage, initAuditSessionPage } from "./components/AuditSessionPage.js";
 import { AuditHistoryPage, initAuditHistoryPage } from "./components/AuditHistoryPage.js";
+import { ImportPage, initImportPage } from "./components/ImportPage.js";
 import { registerRoute, navigate, getCurrentRoute } from "./router.js";
 import { subscribeSessions } from "./services/SessionsStore.js";
 import { subscribeEntries } from "./services/EntriesStore.js";
@@ -46,6 +47,8 @@ export class App {
         registerRoute("audit-session", AuditSessionPage, initAuditSessionPage);
 
         registerRoute("audit-history", AuditHistoryPage, initAuditHistoryPage);
+
+        registerRoute("import", ImportPage, initImportPage);
 
     }
 

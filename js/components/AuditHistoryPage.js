@@ -18,6 +18,7 @@ export function AuditHistoryPage() {
             { label: "Date", key: "date" },
             { label: "Shift", key: "shift" },
             { label: "YM", key: "ym" },
+            { label: "Source", render: row => sourceBadge(row.source) },
             { label: "Issues", render: row => row.entries.length },
             { label: "Status", render: row => SessionStatusBadge(row.status) },
             { label: "", render: row => actionButtons(row.id, row.status) }
@@ -45,6 +46,14 @@ export function AuditHistoryPage() {
         </section>
 
     `;
+
+}
+
+function sourceBadge(source) {
+
+    return source === "valet-import"
+        ? `<span class="status-badge status-badge--other">Valet Import</span>`
+        : `<span class="status-badge status-badge--completed">Manual</span>`;
 
 }
 
@@ -92,6 +101,11 @@ function viewSession(id) {
         <dl class="detail-view">
             <dt>YM</dt><dd>${session.ym}</dd>
             <dt>Status</dt><dd>${SessionStatusBadge(session.status)}</dd>
+            <dt>Source</dt><dd>${sourceBadge(session.source)}</dd>
+            ${session.locations
+                ? `<dt>Locations Audited (${session.locations.length})</dt><dd>${session.locations.join(", ")}</dd>`
+                : ""
+            }
         </dl>
 
         <div class="audit-table-wrapper" style="margin-top:20px;">

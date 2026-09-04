@@ -78,6 +78,32 @@ extension — right-click `index.html` → "Open with Live Server".)
       moment you hit "Start Audit" — only adding entries within an
       already-started audit works offline.)
 
+## Importing Location Audit rounds (Valet CSV)
+
+The "Import" page reads the `eventReport` CSV export (Building/Yard, Location,
+Event Type, Date UTC, User ID, ...), keeps only `LOCATION_AUDIT` rows, and
+groups consecutive rows by the same User ID into "rounds" — one round is one
+person's walk of the yard. A gap of more than 30 minutes between two scans by
+the same user starts a new round (see `DEFAULT_GAP_MINUTES` in
+`js/services/ImportService.js` if this needs to change).
+
+Each round's timestamp is converted from UTC to Berlin local time
+(DST-aware, via `Intl` — not a fixed offset), and that Berlin time is what
+decides which shift (Early/Twilight/Night) and which calendar date the round
+counts toward. These imported rounds count toward the "2 audits per shift"
+target exactly the same as ones started manually in the app — the Dashboard
+doesn't distinguish where an audit came from.
+
+An imported round becomes a Completed audit session with **no entries** (the
+CSV only proves the location was scanned, not what was found there) — a
+supervisor can still open it from History and add entries/Work IDs
+afterward, same as any other completed audit. The list of locations scanned
+is kept on the session and shown in its detail view.
+
+Uploading overlapping CSV exports is safe — each round has a stable id
+(User ID + start timestamp), and rounds already imported are shown as "Ya
+importado" and skipped.
+
 ## Known limitations
 
 - **Brief flicker on load** — the very first render happens before Firebase

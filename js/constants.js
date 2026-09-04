@@ -6,29 +6,107 @@ export const SHIFT_HOURS = {
     "Night": "20:45 - 06:00"
 };
 
+// Used to classify an arbitrary time-of-day into a shift (see
+// getShiftForTime below) — the official start of each shift, in
+// minutes since midnight, Berlin local time.
+const SHIFT_START_MINUTES = {
+    "Early": 6 * 60,
+    "Twilight": 11 * 60 + 45,
+    "Night": 20 * 60 + 45
+};
+
 export const ISSUE_TYPES = ["Damage", "Mismatch", "Missing Trailer", "Other"];
 
 export const AUDITS_PER_SHIFT_TARGET = 2;
 
+const berlinFormatter = new Intl.DateTimeFormat("en-CA", {
+
+    timeZone: "Europe/Berlin",
+
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+
+    hour12: false
+
+});
+
 /**
- * Guesses the current shift from the clock, used only to pre-select a
- * sensible default when starting a new audit — the user can always
- * override it.
+ * Converts any JS Date into its Berlin-local calendar date and
+ * clock time — correctly handles CET/CEST daylight saving, unlike a
+ * fixed UTC+1/+2 offset. Used both for "what shift is it right now"
+ * and for converting the CSV import's UTC timestamps.
+ */
+export function toBerlinParts(date) {
+
+    const parts = berlinFormatter.formatToParts(date);
+
+    const get = type => parts.find(part => part.type === type)?.value;
+
+    return {
+
+        date: `${get("year")}-${get("month")}-${get("day")}`,
+
+        time: `${get("hour")}:${get("minute")}`,
+
+        hour: Number(get("hour")),
+
+        minute: Number(get("minute"))
+
+    };
+
+}
+
+/**
+ * Classifies a Berlin-local hour/minute into a shift: whichever
+ * shift's official start time is the most recent one at or before
+ * this moment (wrapping around midnight for Night, which starts the
+ * evening before and runs past 00:00). This also means the short
+ * handover gaps between shifts (11:30–11:44, 20:30–20:44) fall under
+ * the shift that's ending, not the one about to start — someone still
+ * finishing up counts as part of the shift they were actually doing.
+ */
+export function getShiftForTime(hour, minute) {
+
+    const minutesOfDay = hour * 60 + minute;
+
+    const shiftsByStart = Object.entries(SHIFT_START_MINUTES)
+        .sort((a, b) => a[1] - b[1]);
+
+    let result = shiftsByStart[shiftsByStart.length - 1][0];
+
+    for (const [shift, startMinutes] of shiftsByStart) {
+
+        if (minutesOfDay >= startMinutes) {
+
+            result = shift;
+
+        }
+
+    }
+
+    return result;
+
+}
+
+/**
+ * Guesses the current shift from the clock (Berlin time, regardless of
+ * the device's own timezone), used only to pre-select a sensible
+ * default when starting a new audit — the user can always override it.
  */
 export function getCurrentShift() {
 
-    const hour = new Date().getHours();
+    const { hour, minute } = toBerlinParts(new Date());
 
-    if (hour >= 6 && hour < 11.5) return "Early";
-
-    if (hour >= 11.5 && hour < 20.5) return "Twilight";
-
-    return "Night";
+    return getShiftForTime(hour, minute);
 
 }
 
 export function todayString() {
 
-    return new Date().toISOString().split("T")[0];
+    return toBerlinParts(new Date()).date;
 
 }

@@ -133,7 +133,61 @@ export async function startSession({ shift, date, ym }) {
 
 }
 
-export async function completeSession(id) {
+/**
+ * Used by the CSV import flow to skip rounds that were already
+ * imported in a previous upload (CSV export ranges tend to overlap).
+ */
+export function isImportKeyUsed(importKey) {
+
+    return getSessions().some(session => session.importKey === importKey);
+
+}
+
+/**
+ * Creates a Completed session directly from a Location Audit CSV round
+ * — unlike startSession(), this is already finished by the time we see
+ * it (it happened in the past, tracked by Valet), so there's no
+ * "In Progress" state to pass through. No entries: the CSV only proves
+ * presence/coverage, not what issues were found, so this session starts
+ * empty and a supervisor can still add entries to it afterward exactly
+ * like any other completed audit.
+ */
+export async function importSession({ shift, date, ym, locations, scanCount, startUtc, importKey }) {
+
+    await authReady;
+
+    if (isImportKeyUsed(importKey)) {
+
+        return null;
+
+    }
+
+    const id = await nextSessionId();
+
+    const session = {
+
+        shift,
+        date,
+        ym,
+
+        status: "Completed",
+
+        source: "valet-import",
+        locations,
+        scanCount,
+        importKey,
+
+        createdAt: startUtc,
+
+        completedAt: startUtc
+
+    };
+
+    await setDoc(doc(db, "auditSessions", id), session);
+
+    return { id, ...session, entries: [] };
+
+}
 
     await authReady;
 

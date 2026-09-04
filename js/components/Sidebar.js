@@ -34,6 +34,11 @@ export function Sidebar() {
                     <span>History</span>
                 </a>
 
+                <a class="sidebar__item" data-route="import">
+                    <i data-lucide="upload"></i>
+                    <span>Import</span>
+                </a>
+
             </nav>
 
         </div>
