@@ -175,6 +175,15 @@
     border-color: rgba(242, 118, 13, .4);
 }
 
+.week-nav {
+    display: flex;
+    gap: 8px;
+}
+
+.week-nav .btn {
+    padding: 0 16px;
+}
+
 /* ==========================================================
    MODAL TITLE (missing from copied modal.css)
 ========================================================== */
@@ -188,6 +197,43 @@
 
 .dashboard__panel--narrow {
     max-width: 520px;
+}
+
+.dashboard__panel-link {
+    font-size: var(--text-sm);
+    color: var(--color-primary);
+    font-weight: var(--font-weight-medium);
+}
+
+.dashboard__panel-link:hover {
+    color: var(--color-primary-hover);
+}
+
+.needs-workid-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.needs-workid-row:last-of-type {
+    border-bottom: none;
+}
+
+.needs-workid-row__action {
+    flex-shrink: 0;
+    font-size: var(--text-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-primary);
+    border: 1px solid rgba(242, 118, 13, .35);
+    border-radius: var(--radius-sm);
+    padding: 6px 12px;
+}
+
+.needs-workid-row__action:hover {
+    background: rgba(242, 118, 13, .1);
 }
 
 /* ==========================================================

@@ -128,20 +128,58 @@ export function getShiftBusinessDate(berlinParts, shift) {
 
 function shiftDateBack(dateString, days) {
 
+    return shiftDateByDays(dateString, -days);
+
+}
+
+/**
+ * Pure calendar-date arithmetic (via Date.UTC, not a real timezone
+ * conversion) — adds or subtracts whole days from a "YYYY-MM-DD"
+ * string. Used for the Night-shift business-date correction above and
+ * for building week ranges below.
+ */
+export function shiftDateByDays(dateString, days) {
+
     const [year, month, day] = dateString.split("-").map(Number);
 
-    // Date.UTC arithmetic here is just calendar math (not a real
-    // timezone conversion) — using UTC avoids any local-timezone DST
-    // edge case shifting the date by an extra day.
     const date = new Date(Date.UTC(year, month - 1, day));
 
-    date.setUTCDate(date.getUTCDate() - days);
+    date.setUTCDate(date.getUTCDate() + days);
 
     const yyyy = date.getUTCFullYear();
     const mm = String(date.getUTCMonth() + 1).padStart(2, "0");
     const dd = String(date.getUTCDate()).padStart(2, "0");
 
     return `${yyyy}-${mm}-${dd}`;
+
+}
+
+/**
+ * Monday of the week containing dateString — weeks run Monday to
+ * Sunday, so a Friday check-in sees the same week's Monday through
+ * that Friday, and the rest fills in once the weekend happens.
+ */
+export function getWeekStart(dateString) {
+
+    const [year, month, day] = dateString.split("-").map(Number);
+
+    const date = new Date(Date.UTC(year, month - 1, day));
+
+    const dayOfWeek = date.getUTCDay(); // 0 = Sunday .. 6 = Saturday
+
+    const diffToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+
+    return shiftDateByDays(dateString, -diffToMonday);
+
+}
+
+/**
+ * The 7 "YYYY-MM-DD" dates of the week starting at weekStart (Monday
+ * through Sunday).
+ */
+export function getWeekDates(weekStart) {
+
+    return Array.from({ length: 7 }, (_, index) => shiftDateByDays(weekStart, index));
 
 }
 

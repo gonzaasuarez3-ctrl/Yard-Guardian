@@ -7,16 +7,21 @@ import {
     getAuditsToday,
     getTrailerDamagesToday,
     getWorkIdsToday,
-    getIssuesToday
+    getIssuesToday,
+    getDamagesNeedingWorkId
 } from "../services/DashboardService.js";
 
 const modal = new Modal();
+
+// Where a Work ID ticket actually gets opened — shown next to any
+// damage that doesn't have one yet.
+const AAP_TICKET_URL = "https://aap-eu.corp.amazon.com/page/734fec2a-5bc1-4930-bcbc-261a6ade0ff3";
 
 export function Dashboard() {
 
     const stats = getDashboardStats();
 
-    const recentIssues = getIssuesToday().slice(0, 6);
+    const needsWorkId = getDamagesNeedingWorkId();
 
     return `
 
@@ -37,21 +42,30 @@ export function Dashboard() {
             <div class="dashboard__panel" style="margin-top:24px;">
 
                 <div class="dashboard__panel-header">
-                    <span class="dashboard__panel-title">Recent Issues</span>
-                    <span class="dashboard__panel-subtitle">Logged today, most recent first</span>
+                    <span class="dashboard__panel-title">Needs Work ID</span>
+                    <a href="${AAP_TICKET_URL}" target="_blank" rel="noopener" class="dashboard__panel-link">
+                        AAP: New Unplanned Request
+                    </a>
                 </div>
 
-                ${recentIssues.length === 0
-                    ? `<p class="audit-table__empty">No issues logged today yet.</p>`
-                    : recentIssues.map(issue => `
-                        <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid var(--color-border);">
+                ${needsWorkId.length === 0
+                    ? `<p class="audit-table__empty">Every recorded Trailer Damage has a Work ID.</p>`
+                    : needsWorkId.slice(0, 8).map(damage => `
+                        <div class="needs-workid-row">
                             <div>
-                                <strong style="color:white;">${issue.trailerNumber}</strong>
-                                <span style="color:var(--color-text-muted); margin-left:8px;">${issue.position || "—"} · ${issue.comment}</span>
+                                <strong style="color:var(--color-text);">${damage.trailerNumber}</strong>
+                                <span style="color:var(--color-text-muted); margin-left:8px;">${damage.position || "—"} · ${damage.comment}</span>
                             </div>
-                            <span class="status-badge status-badge--other">${issue.eventType}</span>
+                            <a href="${AAP_TICKET_URL}" target="_blank" rel="noopener" class="needs-workid-row__action">
+                                Open Ticket
+                            </a>
                         </div>
                     `).join("")
+                }
+
+                ${needsWorkId.length > 8
+                    ? `<p class="dashboard__panel-subtitle" style="margin-top:12px;">+${needsWorkId.length - 8} more without a Work ID</p>`
+                    : ""
                 }
 
             </div>

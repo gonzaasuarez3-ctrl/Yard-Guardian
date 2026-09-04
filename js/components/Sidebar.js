@@ -25,6 +25,11 @@ export function Sidebar() {
                     <span>Dashboard</span>
                 </a>
 
+                <a class="sidebar__item" data-route="weekly-report">
+                    <i data-lucide="calendar-range"></i>
+                    <span>Weekly</span>
+                </a>
+
                 <a class="sidebar__item" data-route="audit-history">
                     <i data-lucide="history"></i>
                     <span>History</span>
@@ -50,6 +55,10 @@ export function Sidebar() {
                 <div class="sidebar__status">
                     <span class="sidebar__status-dot" id="connectionDot"></span>
                     <span id="connectionLabel">Connecting…</span>
+                </div>
+
+                <div class="sidebar__credit">
+                    Built by Gonzsuar
                 </div>
 
             </div>

@@ -142,13 +142,33 @@ export doesn't create duplicates.
 The Dashboard's **Trailer Damage**, **Work IDs**, and **Issues Found** cards
 count today's records from these collections specifically — not from issues
 logged manually through the in-app audit form (those live separately as
-entries within an audit session). "Issues Found" comes from Correction events —
+entries within an audit session). "Issues Found" requires **both**: the row
+is a Correction event —
 `Correction-Removed`/`Correction-Added`/`Correction-Displaced`/`Correction-Location`
 (matched regardless of hyphen/underscore/space style, e.g.
-`CORRECTION_LOCATION` also matches) — that have a comment (most Correction
-rows are routine and get skipped; a comment on one usually means something
-was worth flagging). Clicking any KPI card opens a detail list — the click
+`CORRECTION_LOCATION` also matches) — **and** its comment mentions "Audit".
+Either condition alone isn't enough; a routine Correction with an unrelated
+comment doesn't count, and a comment mentioning "Audit" on some other event
+type doesn't either. Clicking any KPI card opens a detail list — the click
 target is anywhere on the card.
+
+## Weekly Report
+
+A second view (sidebar → **Weekly**) rolls up the same data over a
+Monday–Sunday week instead of a single day: total audits vs. the week's
+target (3 shifts × 2 × 7 days = 42), total Issues/Trailer Damage/Work IDs,
+and a day-by-day × shift compliance grid. Use the arrows to page to a
+previous week — this is exactly the "how did last week go" check meant for
+a Friday review, but it works for any week, not just the current one.
+
+## Needs Work ID
+
+The Dashboard's second panel lists every Trailer Damage record that doesn't
+have a Work ID recorded for that same trailer (matched by trailer number,
+not scoped to "today" — a damage from a few days ago with no Work ID keeps
+showing up until it's handled). Each row links straight to
+[AAP: New Unplanned Request](https://aap-eu.corp.amazon.com/page/734fec2a-5bc1-4930-bcbc-261a6ade0ff3)
+to open the ticket.
 
 ## Known limitations
 

@@ -257,11 +257,11 @@ function normalizeEventType(value) {
 }
 
 /**
- * "Issues" come from two independent signals: a Correction event with
- * any comment (most Correction rows are routine and get skipped — a
- * comment on one usually means something was worth flagging), OR any
- * row at all whose comment mentions "Audit" — same comment-keyword
- * pattern as Trailer Damage/Work IDs, regardless of event type.
+ * "Issues" are Correction events (Removed/Added/Displaced/Location)
+ * whose comment specifically mentions "Audit" — both conditions
+ * required, not either. A Correction with an unrelated comment, or an
+ * unrelated event type that happens to mention "Audit", doesn't count;
+ * only the intersection does.
  */
 export function extractIssues(rows) {
 
@@ -270,13 +270,12 @@ export function extractIssues(rows) {
         .filter(row => {
 
             const eventType = normalizeEventType(row["Event Type"]);
-            const comment = (row["Comment"] || "").trim();
 
-            const isCommentedCorrection = ISSUE_EVENT_TYPES.includes(eventType) && comment.length > 0;
+            const isCorrectionType = ISSUE_EVENT_TYPES.includes(eventType);
 
             const mentionsAudit = matchesKeywords(row["Comment"], ["AUDIT"]);
 
-            return isCommentedCorrection || mentionsAudit;
+            return isCorrectionType && mentionsAudit;
 
         })
 
