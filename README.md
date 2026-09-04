@@ -129,6 +129,17 @@ Uploading overlapping CSV exports is safe — each round has a stable id
 (User ID + start timestamp), and rounds already imported are shown as "Ya
 importado" and skipped.
 
+Trailer Damage/Work ID/Issue records are keyed by trailer + location +
+comment text — **not** by timestamp. Amazon's system re-logs the same
+persistent damage note across many rows on different dates as it sits
+unresolved, and keying on the timestamp would treat every one of those as a
+brand-new record; keying on content instead collapses them into one. A
+genuinely different comment on the same trailer still creates a separate
+record. (If you're upgrading from a version that keyed on timestamp, run
+"Clear all Trailer Damage" / "Clear all Work IDs" / "Clear all Issues" on
+the Import page once and re-import, or the old timestamp-keyed duplicates
+will just sit alongside the new ones.)
+
 The same upload also scans **every** row's `Comment` column (not just
 `LOCATION_AUDIT` rows) for two things: comments containing "DAMAGE",
 "BROKEN", or "ISSUE" become **Trailer Damage** records, and comments

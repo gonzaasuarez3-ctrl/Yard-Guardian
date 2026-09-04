@@ -207,11 +207,16 @@ function buildCsvRecord(row) {
 
 function buildRecordKey(row) {
 
+    // Deliberately excludes Date UTC: the same persistent damage/note
+    // gets re-logged across multiple CSV rows on different dates with
+    // otherwise identical content (trailer, location, comment) — keying
+    // on the timestamp would treat every re-log as a new record instead
+    // of recognizing it as the same one. A genuinely different comment
+    // (new information) still produces a new key, which is correct.
     const raw = [
         row["Location"] || "",
         row["Vehicle #"] || row["License Plate"] || "",
-        row["Date UTC"] || "",
-        (row["Comment"] || "").slice(0, 40)
+        (row["Comment"] || "").trim()
     ].join("_");
 
     const sanitized = raw
