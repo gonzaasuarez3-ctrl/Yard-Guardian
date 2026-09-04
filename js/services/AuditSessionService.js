@@ -189,6 +189,8 @@ export async function importSession({ shift, date, ym, locations, scanCount, sta
 
 }
 
+export async function completeSession(id) {
+
     await authReady;
 
     await updateDoc(doc(db, "auditSessions", id), {
