@@ -150,3 +150,26 @@ export function todayString() {
     return toBerlinParts(new Date()).date;
 
 }
+
+/**
+ * Same idea as getShiftBusinessDate, but for "right now" instead of a
+ * specific record — used everywhere the Dashboard/compliance/start-audit
+ * form needs to know "which business day are we in". Before 06:00
+ * Berlin, we're still in the tail end of last night's Night shift, so
+ * this returns yesterday's date; checking the Dashboard at 5am should
+ * show that shift's compliance, not an empty "today" that hasn't
+ * started yet.
+ */
+export function getCurrentBusinessDate() {
+
+    const berlin = toBerlinParts(new Date());
+
+    if (berlin.hour < 6) {
+
+        return shiftDateBack(berlin.date, 1);
+
+    }
+
+    return berlin.date;
+
+}

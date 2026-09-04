@@ -1,7 +1,7 @@
 import { getSessions, getAllEntries } from "./AuditSessionService.js";
 import { getTrailerDamages } from "./TrailerDamageService.js";
 import { getWorkIds } from "./WorkIdService.js";
-import { SHIFTS, AUDITS_PER_SHIFT_TARGET, todayString } from "../constants.js";
+import { SHIFTS, AUDITS_PER_SHIFT_TARGET, getCurrentBusinessDate } from "../constants.js";
 
 /**
  * An audit only counts toward the shift's quota once it's Completed —
@@ -11,7 +11,7 @@ import { SHIFTS, AUDITS_PER_SHIFT_TARGET, todayString } from "../constants.js";
  * created (Berlin-time for CSV imports, whatever the YM picked for a
  * manual audit) — this just counts by that stored value.
  */
-export function getShiftCompliance(date = todayString()) {
+export function getShiftCompliance(date = getCurrentBusinessDate()) {
 
     const completedToday = getSessions().filter(
         session => session.date === date && session.status === "Completed"
@@ -29,7 +29,7 @@ export function getShiftCompliance(date = todayString()) {
 
 }
 
-export function getAuditsToday(date = todayString()) {
+export function getAuditsToday(date = getCurrentBusinessDate()) {
 
     return getSessions()
 
@@ -39,19 +39,19 @@ export function getAuditsToday(date = todayString()) {
 
 }
 
-export function getTrailerDamagesToday(date = todayString()) {
+export function getTrailerDamagesToday(date = getCurrentBusinessDate()) {
 
     return getTrailerDamages().filter(damage => damage.berlinDate === date);
 
 }
 
-export function getWorkIdsToday(date = todayString()) {
+export function getWorkIdsToday(date = getCurrentBusinessDate()) {
 
     return getWorkIds().filter(workId => workId.berlinDate === date);
 
 }
 
-export function getDashboardStats(date = todayString()) {
+export function getDashboardStats(date = getCurrentBusinessDate()) {
 
     const entriesToday = getAllEntries().filter(entry => entry.date === date);
 

@@ -11,7 +11,7 @@ import {
 } from "../services/DashboardService.js";
 import { getActiveSession, getAllEntries } from "../services/AuditSessionService.js";
 import { navigate } from "../router.js";
-import { todayString } from "../constants.js";
+import { getCurrentBusinessDate } from "../constants.js";
 
 const modal = new Modal();
 
@@ -22,7 +22,7 @@ export function Dashboard() {
     const activeSession = getActiveSession();
 
     const recentEntries = getAllEntries()
-        .filter(entry => entry.date === todayString())
+        .filter(entry => entry.date === getCurrentBusinessDate())
         .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
         .slice(0, 6);
 

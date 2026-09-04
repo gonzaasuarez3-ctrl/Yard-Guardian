@@ -5,7 +5,7 @@ import {
     completeSession
 } from "../services/AuditSessionService.js";
 import { navigate } from "../router.js";
-import { SHIFTS, SHIFT_HOURS, getCurrentShift, todayString } from "../constants.js";
+import { SHIFTS, SHIFT_HOURS, getCurrentShift, getCurrentBusinessDate } from "../constants.js";
 
 export function AuditSessionPage() {
 
@@ -45,7 +45,7 @@ function renderStartForm() {
 
                     <div class="form-group">
                         <label for="date">Date</label>
-                        <input id="date" type="date" value="${todayString()}" required>
+                        <input id="date" type="date" value="${getCurrentBusinessDate()}" required>
                     </div>
 
                     <div class="form-group">

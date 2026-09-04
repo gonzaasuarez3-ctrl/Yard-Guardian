@@ -103,6 +103,12 @@ date and can both count toward that shift's target — otherwise the second
 one would silently count toward the *next* day's Night shift instead. This
 applies to Trailer Damage and Work ID records too, not just audit rounds.
 
+For the same reason, the Dashboard's notion of "today" isn't just the raw
+calendar date — before 06:00 Berlin, it's still yesterday's business day
+(`getCurrentBusinessDate`), so checking the Dashboard at 5am shows last
+night's still-relevant Night shift instead of an empty "today" that hasn't
+started yet. From 06:00 onward it's the actual calendar date again.
+
 An imported round becomes a Completed audit session with **no entries** (the
 CSV only proves the location was scanned, not what was found there) — a
 supervisor can still open it from History and add entries/Work IDs
