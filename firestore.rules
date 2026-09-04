@@ -1,0 +1,56 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /auditSessions/{sessionId} {
+
+      allow read, write: if request.auth != null;
+
+      match /entries/{entryId} {
+
+        allow read, write: if request.auth != null;
+
+      }
+
+    }
+
+    match /counters/{counterId} {
+
+      allow read, write: if request.auth != null;
+
+    }
+
+    // Collection-group query support: the app queries `entries` across
+    // every session at once (collectionGroup), not just within one known
+    // session's path. Without this wildcard rule, that specific kind of
+    // query is denied even though the nested rule above already allows
+    // reading a single session's own entries subcollection directly.
+    match /{path=**}/entries/{entryId} {
+
+      allow read, write: if request.auth != null;
+
+    }
+
+    // Trailer Damage and Work ID records extracted from the CSV import
+    // (js/services/TrailerDamageService.js / WorkIdService.js).
+    match /trailerDamages/{damageId} {
+
+      allow read, write: if request.auth != null;
+
+    }
+
+    match /workIds/{workIdId} {
+
+      allow read, write: if request.auth != null;
+
+    }
+
+    match /issues/{issueId} {
+
+      allow read, write: if request.auth != null;
+
+    }
+
+  }
+}
