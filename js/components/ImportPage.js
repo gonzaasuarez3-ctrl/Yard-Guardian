@@ -16,13 +16,13 @@ export function ImportPage() {
 
             <div class="dashboard__header">
                 <h2 class="dashboard__title">Import Location Audits</h2>
-                <p class="dashboard__subtitle">Subí el CSV de eventos (Valet) para registrar audits, Trailer Damage y Work IDs.</p>
+                <p class="dashboard__subtitle">Upload the events CSV (Valet) to record audits, Trailer Damage, and Work IDs.</p>
             </div>
 
             <div class="dashboard__panel dashboard__panel--narrow">
 
                 <div class="form-group">
-                    <label for="csvFile">Archivo CSV (eventReport)</label>
+                    <label for="csvFile">CSV file (eventReport)</label>
                     <input id="csvFile" type="file" accept=".csv">
                 </div>
 
@@ -48,7 +48,7 @@ export function initImportPage() {
 
         if (!file) return;
 
-        setStatus("Leyendo archivo...");
+        setStatus("Reading file...");
 
         try {
 
@@ -60,13 +60,13 @@ export function initImportPage() {
 
             if (detectedRounds.length === 0 && detectedDamages.length === 0 && detectedWorkIds.length === 0) {
 
-                setStatus("No se encontraron audits, Trailer Damage ni Work IDs en este archivo.");
+                setStatus("No audits, Trailer Damage, or Work IDs found in this file.");
                 document.getElementById("importPreviewContainer").innerHTML = "";
                 return;
 
             }
 
-            setStatus(`${detectedRounds.length} ronda(s) de audit, ${detectedDamages.length} Trailer Damage, ${detectedWorkIds.length} Work ID detectados. Revisá y confirmá.`);
+            setStatus(`${detectedRounds.length} audit round(s), ${detectedDamages.length} Trailer Damage, ${detectedWorkIds.length} Work ID detected. Review and confirm.`);
 
             renderPreview();
 
@@ -74,7 +74,7 @@ export function initImportPage() {
 
             console.error("Failed to parse CSV:", error);
 
-            setStatus("No se pudo leer el archivo — confirmá que es el CSV exportado correctamente.");
+            setStatus("Couldn't read the file — confirm it's the correctly exported CSV.");
 
         }
 
@@ -121,13 +121,13 @@ function renderPreview() {
             {
                 label: "",
                 render: row => row.alreadyImported
-                    ? `<span style="color:var(--color-text-muted); font-size:12px;">Ya importado</span>`
+                    ? `<span style="color:var(--color-text-muted); font-size:12px;">Already imported</span>`
                     : `<input type="checkbox" class="round-checkbox" data-key="${row.importKey}" checked>`
             },
-            { label: "Usuario", key: "userId" },
-            { label: "Fecha (Berlin)", key: "berlinDate" },
-            { label: "Hora (Berlin)", key: "berlinTime" },
-            { label: "Turno", key: "shift" },
+            { label: "User", key: "userId" },
+            { label: "Date (Berlin)", key: "berlinDate" },
+            { label: "Time (Berlin)", key: "berlinTime" },
+            { label: "Shift", key: "shift" },
             { label: "Locations", render: row => row.locations.length },
             { label: "Scans", key: "scanCount" }
 
@@ -135,7 +135,7 @@ function renderPreview() {
 
         rows,
 
-        emptyMessage: "No hay rondas de audit para mostrar."
+        emptyMessage: "No audit rounds to show."
 
     });
 
@@ -143,8 +143,8 @@ function renderPreview() {
 
         <div class="dashboard__panel" style="margin-top:24px;">
             <div class="dashboard__panel-header">
-                <span class="dashboard__panel-title">Rondas de Audit</span>
-                <span class="dashboard__panel-subtitle">Elegí cuáles importar — las ya importadas se saltan solas.</span>
+                <span class="dashboard__panel-title">Audit Rounds</span>
+                <span class="dashboard__panel-subtitle">Choose which to import — already-imported ones are skipped automatically.</span>
             </div>
         </div>
 
@@ -153,11 +153,11 @@ function renderPreview() {
         </div>
 
         <p style="color:var(--color-text-muted); font-size:var(--text-sm); margin-top:16px;">
-            Trailer Damage y Work IDs detectados se importan automáticamente al confirmar (${detectedDamages.length} Trailer Damage, ${detectedWorkIds.length} Work ID) — no hace falta seleccionarlos, no se duplican si ya estaban importados.
+            Trailer Damage and Work IDs detected are imported automatically on confirm (${detectedDamages.length} Trailer Damage, ${detectedWorkIds.length} Work ID) — no need to select them, and they won't be duplicated if already imported.
         </p>
 
         <div style="margin-top:16px;">
-            <button class="btn btn-primary" id="confirmImportButton">Importar seleccionados</button>
+            <button class="btn btn-primary" id="confirmImportButton">Import selected</button>
         </div>
 
     `;
@@ -179,13 +179,13 @@ async function handleConfirmImport() {
 
     if (totalToImport === 0) {
 
-        setStatus("No hay nada para importar.");
+        setStatus("Nothing to import.");
 
         return;
 
     }
 
-    setStatus(`Importando ${roundsToImport.length} ronda(s), ${detectedDamages.length} Trailer Damage, ${detectedWorkIds.length} Work ID...`);
+    setStatus(`Importing ${roundsToImport.length} round(s), ${detectedDamages.length} Trailer Damage, ${detectedWorkIds.length} Work ID...`);
 
     let importedRounds = 0;
 
@@ -243,7 +243,7 @@ async function handleConfirmImport() {
 
     }
 
-    setStatus(`Listo: ${importedRounds} audit(s), ${detectedDamages.length} Trailer Damage, ${detectedWorkIds.length} Work ID procesados.`);
+    setStatus(`Done: ${importedRounds} audit(s), ${detectedDamages.length} Trailer Damage, ${detectedWorkIds.length} Work ID processed.`);
 
     renderPreview();
 

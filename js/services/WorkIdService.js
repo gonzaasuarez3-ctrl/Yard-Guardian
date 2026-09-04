@@ -20,7 +20,7 @@ authReady.then(() => {
 
         console.error("Work IDs listener error:", error);
 
-        showErrorBanner("Error cargando Work IDs desde Firestore: " + error.message);
+        showErrorBanner("Error loading Work IDs from Firestore: " + error.message);
 
     });
 

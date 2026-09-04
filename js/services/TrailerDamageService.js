@@ -20,7 +20,7 @@ authReady.then(() => {
 
         console.error("Trailer damages listener error:", error);
 
-        showErrorBanner("Error cargando Trailer Damage desde Firestore: " + error.message);
+        showErrorBanner("Error loading Trailer Damage from Firestore: " + error.message);
 
     });
 

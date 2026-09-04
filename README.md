@@ -94,6 +94,15 @@ counts toward. These imported rounds count toward the "2 audits per shift"
 target exactly the same as ones started manually in the app — the Dashboard
 doesn't distinguish where an audit came from.
 
+**Night shift date handling:** Night runs 20:45 to 06:00 the next morning, so
+an audit logged at, say, 05:00 is calendar-wise "tomorrow" but is really
+still that same Night shift. Anything logged before 06:00 gets attributed
+back to the date the shift actually started (`getShiftBusinessDate` in
+`js/constants.js`), so both audits from one Night shift land on the same
+date and can both count toward that shift's target — otherwise the second
+one would silently count toward the *next* day's Night shift instead. This
+applies to Trailer Damage and Work ID records too, not just audit rounds.
+
 An imported round becomes a Completed audit session with **no entries** (the
 CSV only proves the location was scanned, not what was found there) — a
 supervisor can still open it from History and add entries/Work IDs
@@ -107,11 +116,12 @@ importado" and skipped.
 The same upload also scans **every** row's `Comment` column (not just
 `LOCATION_AUDIT` rows) for two things: comments containing "DAMAGE",
 "BROKEN", or "ISSUE" become **Trailer Damage** records, and comments
-containing "Work ID" become **Work ID** records — each tagged with the
-trailer number (Vehicle # from the CSV, falling back to License Plate),
-position (Location), and the Berlin date/time of that row. These import
-automatically (no per-row selection needed) and are deduplicated by content,
-so re-uploading an overlapping export doesn't create duplicates.
+containing "Work ID", "WorkID", or "Work Request ID" become **Work ID**
+records — each tagged with the trailer number (Vehicle # from the CSV,
+falling back to License Plate), position (Location), and the Berlin
+date/time of that row. These import automatically (no per-row selection
+needed) and are deduplicated by content, so re-uploading an overlapping
+export doesn't create duplicates.
 
 The Dashboard's **Trailer Damage** and **Work IDs** cards count today's
 records from these two collections specifically — not from issues logged

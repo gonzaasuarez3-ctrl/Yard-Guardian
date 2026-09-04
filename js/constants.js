@@ -105,6 +105,46 @@ export function getCurrentShift() {
 
 }
 
+/**
+ * Night shift runs from 20:45 one evening to 06:00 the next morning.
+ * A scan/entry logged at, say, 05:00 is calendar-wise "tomorrow", but
+ * it's really still last night's Night shift — attributing it to
+ * tomorrow's date would mean the two audits from a single Night shift
+ * (one done at the start, one near the end) never land on the same
+ * day, and compliance could never show 2/2. This returns the date the
+ * shift actually started, given a Berlin-local hour/minute/date.
+ */
+export function getShiftBusinessDate(berlinParts, shift) {
+
+    if (shift === "Night" && berlinParts.hour < 6) {
+
+        return shiftDateBack(berlinParts.date, 1);
+
+    }
+
+    return berlinParts.date;
+
+}
+
+function shiftDateBack(dateString, days) {
+
+    const [year, month, day] = dateString.split("-").map(Number);
+
+    // Date.UTC arithmetic here is just calendar math (not a real
+    // timezone conversion) — using UTC avoids any local-timezone DST
+    // edge case shifting the date by an extra day.
+    const date = new Date(Date.UTC(year, month - 1, day));
+
+    date.setUTCDate(date.getUTCDate() - days);
+
+    const yyyy = date.getUTCFullYear();
+    const mm = String(date.getUTCMonth() + 1).padStart(2, "0");
+    const dd = String(date.getUTCDate()).padStart(2, "0");
+
+    return `${yyyy}-${mm}-${dd}`;
+
+}
+
 export function todayString() {
 
     return toBerlinParts(new Date()).date;

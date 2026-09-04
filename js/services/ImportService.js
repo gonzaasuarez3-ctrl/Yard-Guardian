@@ -1,4 +1,4 @@
-import { toBerlinParts, getShiftForTime } from "../constants.js";
+import { toBerlinParts, getShiftForTime, getShiftBusinessDate } from "../constants.js";
 
 const DEFAULT_GAP_MINUTES = 30;
 
@@ -101,6 +101,8 @@ function finalizeRound(round) {
 
     const shift = getShiftForTime(berlinStart.hour, berlinStart.minute);
 
+    const businessDate = getShiftBusinessDate(berlinStart, shift);
+
     return {
 
         userId: round.userId,
@@ -109,7 +111,7 @@ function finalizeRound(round) {
 
         startUtc: round.startUtc,
 
-        berlinDate: berlinStart.date,
+        berlinDate: businessDate,
         berlinTime: berlinStart.time,
 
         shift,
@@ -150,7 +152,7 @@ function groupBy(items, keyFn) {
 
 const DAMAGE_KEYWORDS = ["DAMAGE", "BROKEN", "ISSUE"];
 
-const WORKID_KEYWORDS = ["WORK ID", "WORKID"];
+const WORKID_KEYWORDS = ["WORK ID", "WORKID", "WORK REQUEST ID"];
 
 function matchesKeywords(comment, keywords) {
 
@@ -176,6 +178,10 @@ function buildCsvRecord(row) {
 
     const berlin = validDate ? toBerlinParts(utcDate) : null;
 
+    const shift = berlin ? getShiftForTime(berlin.hour, berlin.minute) : null;
+
+    const businessDate = berlin ? getShiftBusinessDate(berlin, shift) : null;
+
     return {
 
         trailerNumber: row["Vehicle #"] || row["License Plate"] || "Unknown",
@@ -183,7 +189,9 @@ function buildCsvRecord(row) {
         comment: (row["Comment"] || "").trim(),
         userId: row["User ID"] || "",
 
-        berlinDate: berlin?.date ?? null,
+        shift,
+
+        berlinDate: businessDate,
         berlinTime: berlin?.time ?? null,
 
         createdAt: validDate ? utcDate.toISOString() : new Date().toISOString(),

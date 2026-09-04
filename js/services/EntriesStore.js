@@ -33,7 +33,7 @@ authReady.then(() => {
         // error includes a link that creates it automatically in ~1 minute.
         console.error("Entries listener error — if this mentions a missing index, open the link in the error to create it.", error);
 
-        showErrorBanner("Error cargando entries desde Firestore: " + error.message + " (revisá la consola del navegador, F12, por si hay un link para crear un índice)");
+        showErrorBanner("Error loading entries from Firestore: " + error.message + " (check the browser console, F12, in case there's a link to create an index)");
 
     });
 

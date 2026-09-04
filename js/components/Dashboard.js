@@ -119,18 +119,18 @@ function showAuditsModal() {
 
         columns: [
             { label: "Login", key: "ym" },
-            { label: "Fecha", key: "date" },
-            { label: "Turno", key: "shift" }
+            { label: "Date", key: "date" },
+            { label: "Shift", key: "shift" }
         ],
 
         rows: audits,
 
-        emptyMessage: "No hay audits registrados hoy."
+        emptyMessage: "No audits recorded today."
 
     });
 
     modal.open(`
-        <h2 class="modal-title">Audits — Hoy</h2>
+        <h2 class="modal-title">Audits — Today</h2>
         <div class="audit-table-wrapper" style="margin-top:16px;">
             ${table}
         </div>
@@ -146,18 +146,18 @@ function showDamagesModal() {
 
         columns: [
             { label: "Trailer", key: "trailerNumber" },
-            { label: "Posición", key: "position" },
-            { label: "Razón", key: "comment" }
+            { label: "Position", key: "position" },
+            { label: "Reason", key: "comment" }
         ],
 
         rows: damages,
 
-        emptyMessage: "No hay Trailer Damage registrado hoy."
+        emptyMessage: "No Trailer Damage recorded today."
 
     });
 
     modal.open(`
-        <h2 class="modal-title">Trailer Damage — Hoy</h2>
+        <h2 class="modal-title">Trailer Damage — Today</h2>
         <div class="audit-table-wrapper" style="margin-top:16px;">
             ${table}
         </div>
@@ -174,17 +174,17 @@ function showWorkIdsModal() {
         columns: [
             { label: "Work ID", key: "comment" },
             { label: "Trailer", key: "trailerNumber" },
-            { label: "Posición", key: "position" }
+            { label: "Position", key: "position" }
         ],
 
         rows: workIds,
 
-        emptyMessage: "No hay Work IDs registrados hoy."
+        emptyMessage: "No Work IDs recorded today."
 
     });
 
     modal.open(`
-        <h2 class="modal-title">Work IDs — Hoy</h2>
+        <h2 class="modal-title">Work IDs — Today</h2>
         <div class="audit-table-wrapper" style="margin-top:16px;">
             ${table}
         </div>

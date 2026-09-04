@@ -35,7 +35,7 @@ onAuthStateChanged(auth, user => {
 
             console.error("Anonymous sign-in failed — check that Anonymous auth is enabled in the Firebase console.", error);
 
-            showErrorBanner("No se pudo conectar (login anónimo falló). Revisá en Firebase Console → Authentication → Sign-in method que 'Anonymous' esté habilitado. Detalle: " + error.code);
+            showErrorBanner("Couldn't connect (anonymous sign-in failed). Check in Firebase Console → Authentication → Sign-in method that 'Anonymous' is enabled. Detail: " + error.code);
 
         });
 

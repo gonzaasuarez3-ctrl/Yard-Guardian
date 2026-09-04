@@ -26,7 +26,7 @@ authReady.then(() => {
 
         console.error("Sessions listener error — check Firestore rules and that the collection exists.", error);
 
-        showErrorBanner("Error cargando audits desde Firestore: " + error.message);
+        showErrorBanner("Error loading audits from Firestore: " + error.message);
 
     });
 
