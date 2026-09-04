@@ -132,9 +132,11 @@ export doesn't create duplicates.
 The Dashboard's **Trailer Damage**, **Work IDs**, and **Issues Found** cards
 count today's records from these collections specifically — not from issues
 logged manually through the in-app audit form (those live separately as
-entries within an audit session). "Issues Found" comes from `ADD_EQUIPMENT`
-/ `REMOVE_EQUIPMENT` events that have a comment (most Add/Remove Equipment
-rows are routine and get skipped — a comment on one usually means something
+entries within an audit session). "Issues Found" comes from Correction events —
+`Correction-Removed`/`Correction-Added`/`Correction-Displaced`/`Correction-Location`
+(matched regardless of hyphen/underscore/space style, e.g.
+`CORRECTION_LOCATION` also matches) — that have a comment (most Correction
+rows are routine and get skipped; a comment on one usually means something
 was worth flagging). Clicking any KPI card opens a detail list — the click
 target is anywhere on the card.
 

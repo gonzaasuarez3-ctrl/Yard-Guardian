@@ -243,13 +243,24 @@ export function extractWorkIds(rows) {
 
 }
 
-const ISSUE_EVENT_TYPES = ["REMOVE_EQUIPMENT", "ADD_EQUIPMENT"];
+const ISSUE_EVENT_TYPES = [
+    "CORRECTION-REMOVED",
+    "CORRECTION-ADDED",
+    "CORRECTION-DISPLACED",
+    "CORRECTION-LOCATION"
+];
+
+function normalizeEventType(value) {
+
+    return (value || "").toUpperCase().trim().replace(/[\s_]+/g, "-");
+
+}
 
 /**
- * "Issues" are Add/Remove Equipment events — but only the ones a person
- * actually left a comment on. Most Add/Remove Equipment rows are routine
- * (fine to ignore); a comment on one usually means something was worth
- * noting.
+ * "Issues" are Correction events — but only the ones a person actually
+ * left a comment on. The CSV can spell these with hyphens or
+ * underscores (e.g. "CORRECTION_LOCATION" vs "Correction-Location"),
+ * so the comparison normalizes both to the same hyphenated form first.
  */
 export function extractIssues(rows) {
 
@@ -257,7 +268,7 @@ export function extractIssues(rows) {
 
         .filter(row => {
 
-            const eventType = (row["Event Type"] || "").toUpperCase();
+            const eventType = normalizeEventType(row["Event Type"]);
             const comment = (row["Comment"] || "").trim();
 
             return ISSUE_EVENT_TYPES.includes(eventType) && comment.length > 0;
