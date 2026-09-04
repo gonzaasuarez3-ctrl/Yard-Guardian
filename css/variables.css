@@ -1,0 +1,124 @@
+/* ==========================================================
+   TRAILER AUDIT — DESIGN SYSTEM
+========================================================== */
+
+:root {
+
+    /* ======================================================
+       COLORS
+       Dark base — appropriate for a tool used around the clock
+       across three shifts, including two overnight. Safety-orange
+       accent is deliberate: it's the color already on hazard
+       signage and hi-vis gear in the yard this tool describes.
+    ====================================================== */
+
+    --color-primary: #F2760D;
+    --color-primary-hover: #FF8A2B;
+    --color-primary-light: rgba(242,118,13,.15);
+
+    --primary: var(--color-primary);
+
+    --color-success: #22C55E;
+    --color-danger: #EF4444;
+    --color-warning: #F5B942;
+    --color-info: #3B82F6;
+
+    --color-background: #0A0D12;
+
+    --color-sidebar: #0E1218;
+
+    --color-surface: #12161D;
+    --color-surface-hover: #1A2029;
+
+    --color-border: rgba(255,255,255,.08);
+    --color-divider: var(--color-border);
+
+    --color-text: #F1F3F5;
+    --color-text-secondary: #B8C0CC;
+    --color-text-muted: #7D8695;
+
+    /* ======================================================
+       TYPOGRAPHY
+       Inter for UI and prose. JetBrains Mono specifically for
+       data that reads as data — KPI figures, trailer/VS numbers,
+       timestamps, audit IDs — so a glance tells you which numbers
+       on the page are literal identifiers versus ordinary text.
+    ====================================================== */
+
+    --font-primary: "Inter", -apple-system, "Segoe UI", sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    --font-brand: var(--font-primary);
+
+    --font-family: var(--font-primary);
+
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+
+    --text-xs: 12px;
+    --text-sm: 14px;
+    --text-md: 16px;
+    --text-lg: 20px;
+    --text-xl: 26px;
+    --text-2xl: 34px;
+    --text-3xl: 42px;
+
+    --font-size-md: var(--text-md);
+    --font-size-2xl: var(--text-2xl);
+
+    /* ======================================================
+       SPACING
+    ====================================================== */
+
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-7: 32px;
+    --space-8: 40px;
+
+    /* ======================================================
+       RADIUS
+       Tighter than a consumer-app scale on purpose — this reads
+       as engineered/functional rather than soft and bubbly.
+    ====================================================== */
+
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 10px;
+    --radius-xl: 12px;
+
+    /* ======================================================
+       SHADOWS
+       Flat and functional — depth comes from borders and surface
+       tone, not soft drop shadows.
+    ====================================================== */
+
+    --shadow-sm: 0 2px 6px rgba(0,0,0,.2);
+
+    --shadow-md: 0 6px 16px rgba(0,0,0,.28);
+
+    --shadow-lg: 0 10px 28px rgba(0,0,0,.35);
+
+    /* ======================================================
+       LAYOUT
+    ====================================================== */
+
+    --sidebar-width: 264px;
+
+    --header-height: 92px;
+
+    --content-max-width: 1700px;
+
+    /* ======================================================
+       ANIMATION
+    ====================================================== */
+
+    --transition-fast: .15s ease;
+
+    --transition: .2s ease;
+
+}

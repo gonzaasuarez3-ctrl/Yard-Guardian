@@ -1,0 +1,118 @@
+.header {
+    position: relative;
+    overflow: hidden;
+    min-height: 210px;
+    background: var(--color-sidebar);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.header__art {
+    position: absolute;
+    inset: 0;
+    clip-path: polygon(48% 0, 100% 0, 100% 100%, 30% 100%);
+}
+
+.header__art svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.header__scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        90deg,
+        var(--color-sidebar) 0%,
+        var(--color-sidebar) 38%,
+        rgba(14, 18, 24, .55) 55%,
+        transparent 72%
+    );
+}
+
+.header__content {
+    position: relative;
+    z-index: 2;
+    max-width: 620px;
+    padding: 36px 40px;
+}
+
+.header__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    font-weight: var(--font-weight-medium);
+}
+
+.header__eyebrow-mark {
+    color: var(--color-primary);
+    font-weight: var(--font-weight-bold);
+}
+
+.header__eyebrow-sep {
+    color: var(--color-border);
+}
+
+.header__title-row {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-top: 14px;
+}
+
+.header__icon-chip {
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
+    border-radius: var(--radius-lg);
+    background: rgba(242, 118, 13, .14);
+    border: 1px solid rgba(242, 118, 13, .25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-primary);
+}
+
+.header__icon-chip svg {
+    width: 26px;
+    height: 26px;
+}
+
+.header__title {
+    font-size: 42px;
+    font-weight: var(--font-weight-bold);
+    letter-spacing: -.02em;
+    color: var(--color-text);
+    line-height: 1.1;
+}
+
+.header__title-accent {
+    color: var(--color-primary);
+}
+
+.header__subtitle {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    margin-top: 6px;
+}
+
+.header__badge {
+    position: absolute;
+    top: 24px;
+    right: 32px;
+    z-index: 2;
+    width: 44px;
+    height: 44px;
+    border-radius: 999px;
+    background: var(--color-primary);
+    color: #0A0D12;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: var(--font-weight-bold);
+    box-shadow: var(--shadow-sm);
+}
