@@ -1,6 +1,7 @@
-import { getSessions, getAllEntries } from "./AuditSessionService.js";
+import { getSessions } from "./AuditSessionService.js";
 import { getTrailerDamages } from "./TrailerDamageService.js";
 import { getWorkIds } from "./WorkIdService.js";
+import { getIssues } from "./IssueService.js";
 import { SHIFTS, AUDITS_PER_SHIFT_TARGET, getCurrentBusinessDate } from "../constants.js";
 
 /**
@@ -51,9 +52,13 @@ export function getWorkIdsToday(date = getCurrentBusinessDate()) {
 
 }
 
-export function getDashboardStats(date = getCurrentBusinessDate()) {
+export function getIssuesToday(date = getCurrentBusinessDate()) {
 
-    const entriesToday = getAllEntries().filter(entry => entry.date === date);
+    return getIssues().filter(issue => issue.berlinDate === date);
+
+}
+
+export function getDashboardStats(date = getCurrentBusinessDate()) {
 
     const compliance = getShiftCompliance(date);
 
@@ -65,7 +70,7 @@ export function getDashboardStats(date = getCurrentBusinessDate()) {
 
         auditsToday: { value: auditsCompleted, target: auditsTarget },
 
-        issuesToday: { value: entriesToday.length },
+        issuesToday: { value: getIssuesToday(date).length },
 
         damagesToday: { value: getTrailerDamagesToday(date).length },
 

@@ -9,6 +9,7 @@ import { subscribeSessions } from "./services/SessionsStore.js";
 import { subscribeEntries } from "./services/EntriesStore.js";
 import { subscribeTrailerDamages } from "./services/TrailerDamageService.js";
 import { subscribeWorkIds } from "./services/WorkIdService.js";
+import { subscribeIssues } from "./services/IssueService.js";
 
 export class App {
 
@@ -65,6 +66,8 @@ export class App {
         subscribeTrailerDamages(rerenderCurrentRoute);
 
         subscribeWorkIds(rerenderCurrentRoute);
+
+        subscribeIssues(rerenderCurrentRoute);
 
     }
 

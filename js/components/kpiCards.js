@@ -14,10 +14,10 @@ export function KpiCards(stats) {
         {
             id: "issues",
             icon: "alert-triangle",
-            title: "Issues Found Today",
+            title: "Issues Found",
             value: stats.issuesToday.value,
             color: "orange",
-            clickable: false
+            clickable: true
         },
 
         {

@@ -129,11 +129,14 @@ date/time of that row. These import automatically (no per-row selection
 needed) and are deduplicated by content, so re-uploading an overlapping
 export doesn't create duplicates.
 
-The Dashboard's **Trailer Damage** and **Work IDs** cards count today's
-records from these two collections specifically — not from issues logged
-manually through the in-app audit form (those still show separately under
-"Issues Found Today"). Clicking either card, or the **Audits** card, opens a
-detail list — the click targets are anywhere on the card.
+The Dashboard's **Trailer Damage**, **Work IDs**, and **Issues Found** cards
+count today's records from these collections specifically — not from issues
+logged manually through the in-app audit form (those live separately as
+entries within an audit session). "Issues Found" comes from `ADD_EQUIPMENT`
+/ `REMOVE_EQUIPMENT` events that have a comment (most Add/Remove Equipment
+rows are routine and get skipped — a comment on one usually means something
+was worth flagging). Clicking any KPI card opens a detail list — the click
+target is anywhere on the card.
 
 ## Known limitations
 

@@ -242,3 +242,34 @@ export function extractWorkIds(rows) {
         .map(buildCsvRecord);
 
 }
+
+const ISSUE_EVENT_TYPES = ["REMOVE_EQUIPMENT", "ADD_EQUIPMENT"];
+
+/**
+ * "Issues" are Add/Remove Equipment events — but only the ones a person
+ * actually left a comment on. Most Add/Remove Equipment rows are routine
+ * (fine to ignore); a comment on one usually means something was worth
+ * noting.
+ */
+export function extractIssues(rows) {
+
+    return rows
+
+        .filter(row => {
+
+            const eventType = (row["Event Type"] || "").toUpperCase();
+            const comment = (row["Comment"] || "").trim();
+
+            return ISSUE_EVENT_TYPES.includes(eventType) && comment.length > 0;
+
+        })
+
+        .map(row => ({
+
+            ...buildCsvRecord(row),
+
+            eventType: row["Event Type"] || ""
+
+        }));
+
+}

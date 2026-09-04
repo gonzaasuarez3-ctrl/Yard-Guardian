@@ -1,12 +1,14 @@
-import { parseCsvFile, extractAuditRounds, extractTrailerDamages, extractWorkIds } from "../services/ImportService.js";
+import { parseCsvFile, extractAuditRounds, extractTrailerDamages, extractWorkIds, extractIssues } from "../services/ImportService.js";
 import { importSession, isImportKeyUsed } from "../services/AuditSessionService.js";
 import { importTrailerDamage } from "../services/TrailerDamageService.js";
 import { importWorkId } from "../services/WorkIdService.js";
+import { importIssue } from "../services/IssueService.js";
 import { Table } from "./table.js";
 
 let detectedRounds = [];
 let detectedDamages = [];
 let detectedWorkIds = [];
+let detectedIssues = [];
 
 export function ImportPage() {
 
@@ -57,16 +59,17 @@ export function initImportPage() {
             detectedRounds = extractAuditRounds(rows);
             detectedDamages = extractTrailerDamages(rows);
             detectedWorkIds = extractWorkIds(rows);
+            detectedIssues = extractIssues(rows);
 
-            if (detectedRounds.length === 0 && detectedDamages.length === 0 && detectedWorkIds.length === 0) {
+            if (detectedRounds.length === 0 && detectedDamages.length === 0 && detectedWorkIds.length === 0 && detectedIssues.length === 0) {
 
-                setStatus("No audits, Trailer Damage, or Work IDs found in this file.");
+                setStatus("No audits, Trailer Damage, Work IDs, or Issues found in this file.");
                 document.getElementById("importPreviewContainer").innerHTML = "";
                 return;
 
             }
 
-            setStatus(`${detectedRounds.length} audit round(s), ${detectedDamages.length} Trailer Damage, ${detectedWorkIds.length} Work ID detected. Review and confirm.`);
+            setStatus(`${detectedRounds.length} audit round(s), ${detectedDamages.length} Trailer Damage, ${detectedWorkIds.length} Work ID, ${detectedIssues.length} Issue(s) detected. Review and confirm.`);
 
             renderPreview();
 
@@ -84,7 +87,7 @@ export function initImportPage() {
     // re-renders the current route after every successful write) — this
     // restores the preview instead of losing it, since the detected
     // arrays live in module scope and survive the DOM being replaced.
-    if (detectedRounds.length > 0 || detectedDamages.length > 0 || detectedWorkIds.length > 0) {
+    if (detectedRounds.length > 0 || detectedDamages.length > 0 || detectedWorkIds.length > 0 || detectedIssues.length > 0) {
 
         renderPreview();
 
@@ -153,7 +156,7 @@ function renderPreview() {
         </div>
 
         <p style="color:var(--color-text-muted); font-size:var(--text-sm); margin-top:16px;">
-            Trailer Damage and Work IDs detected are imported automatically on confirm (${detectedDamages.length} Trailer Damage, ${detectedWorkIds.length} Work ID) — no need to select them, and they won't be duplicated if already imported.
+            Trailer Damage, Work IDs, and Issues detected are imported automatically on confirm (${detectedDamages.length} Trailer Damage, ${detectedWorkIds.length} Work ID, ${detectedIssues.length} Issue) — no need to select them, and they won't be duplicated if already imported.
         </p>
 
         <div style="margin-top:16px;">
@@ -185,7 +188,7 @@ async function handleConfirmImport() {
 
     }
 
-    setStatus(`Importing ${roundsToImport.length} round(s), ${detectedDamages.length} Trailer Damage, ${detectedWorkIds.length} Work ID...`);
+    setStatus(`Importing ${roundsToImport.length} round(s), ${detectedDamages.length} Trailer Damage, ${detectedWorkIds.length} Work ID, ${detectedIssues.length} Issue(s)...`);
 
     let importedRounds = 0;
 
@@ -243,7 +246,21 @@ async function handleConfirmImport() {
 
     }
 
-    setStatus(`Done: ${importedRounds} audit(s), ${detectedDamages.length} Trailer Damage, ${detectedWorkIds.length} Work ID processed.`);
+    for (const issue of detectedIssues) {
+
+        try {
+
+            await importIssue(issue);
+
+        } catch (error) {
+
+            console.error("Failed to import issue:", issue.recordKey, error);
+
+        }
+
+    }
+
+    setStatus(`Done: ${importedRounds} audit(s), ${detectedDamages.length} Trailer Damage, ${detectedWorkIds.length} Work ID, ${detectedIssues.length} Issue(s) processed.`);
 
     renderPreview();
 

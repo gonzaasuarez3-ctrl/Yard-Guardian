@@ -1,17 +1,16 @@
 import { KpiCards } from "./kpiCards.js";
 import { ShiftCompliancePanel } from "./ShiftCompliancePanel.js";
-import { IssueBadge } from "./badge.js";
 import { Modal } from "./modal.js";
 import { Table } from "./table.js";
 import {
     getDashboardStats,
     getAuditsToday,
     getTrailerDamagesToday,
-    getWorkIdsToday
+    getWorkIdsToday,
+    getIssuesToday
 } from "../services/DashboardService.js";
-import { getActiveSession, getAllEntries } from "../services/AuditSessionService.js";
+import { getActiveSession } from "../services/AuditSessionService.js";
 import { navigate } from "../router.js";
-import { getCurrentBusinessDate } from "../constants.js";
 
 const modal = new Modal();
 
@@ -21,10 +20,7 @@ export function Dashboard() {
 
     const activeSession = getActiveSession();
 
-    const recentEntries = getAllEntries()
-        .filter(entry => entry.date === getCurrentBusinessDate())
-        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-        .slice(0, 6);
+    const recentIssues = getIssuesToday().slice(0, 6);
 
     return `
 
@@ -54,15 +50,15 @@ export function Dashboard() {
                     <span class="dashboard__panel-subtitle">Logged today, most recent first</span>
                 </div>
 
-                ${recentEntries.length === 0
+                ${recentIssues.length === 0
                     ? `<p class="audit-table__empty">No issues logged today yet.</p>`
-                    : recentEntries.map(entry => `
+                    : recentIssues.map(issue => `
                         <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px solid var(--color-border);">
                             <div>
-                                <strong style="color:white;">${entry.trailerId}</strong>
-                                <span style="color:var(--color-text-muted); margin-left:8px;">${entry.shift} · ${entry.parkingPosition || "—"}</span>
+                                <strong style="color:white;">${issue.trailerNumber}</strong>
+                                <span style="color:var(--color-text-muted); margin-left:8px;">${issue.position || "—"} · ${issue.comment}</span>
                             </div>
-                            ${IssueBadge(entry.issueType)}
+                            <span class="status-badge status-badge--other">${issue.eventType}</span>
                         </div>
                     `).join("")
                 }
@@ -106,6 +102,10 @@ function openKpiDetail(cardId) {
     } else if (cardId === "workids") {
 
         showWorkIdsModal();
+
+    } else if (cardId === "issues") {
+
+        showIssuesModal();
 
     }
 
@@ -185,6 +185,34 @@ function showWorkIdsModal() {
 
     modal.open(`
         <h2 class="modal-title">Work IDs — Today</h2>
+        <div class="audit-table-wrapper" style="margin-top:16px;">
+            ${table}
+        </div>
+    `);
+
+}
+
+function showIssuesModal() {
+
+    const issues = getIssuesToday();
+
+    const table = Table({
+
+        columns: [
+            { label: "Event", key: "eventType" },
+            { label: "Trailer", key: "trailerNumber" },
+            { label: "Position", key: "position" },
+            { label: "Comment", key: "comment" }
+        ],
+
+        rows: issues,
+
+        emptyMessage: "No issues recorded today."
+
+    });
+
+    modal.open(`
+        <h2 class="modal-title">Issues Found — Today</h2>
         <div class="audit-table-wrapper" style="margin-top:16px;">
             ${table}
         </div>
