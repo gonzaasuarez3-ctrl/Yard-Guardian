@@ -7,6 +7,8 @@ import { ImportPage, initImportPage } from "./components/ImportPage.js";
 import { registerRoute, navigate, getCurrentRoute } from "./router.js";
 import { subscribeSessions } from "./services/SessionsStore.js";
 import { subscribeEntries } from "./services/EntriesStore.js";
+import { subscribeTrailerDamages } from "./services/TrailerDamageService.js";
+import { subscribeWorkIds } from "./services/WorkIdService.js";
 
 export class App {
 
@@ -59,6 +61,10 @@ export class App {
         subscribeSessions(rerenderCurrentRoute);
 
         subscribeEntries(rerenderCurrentRoute);
+
+        subscribeTrailerDamages(rerenderCurrentRoute);
+
+        subscribeWorkIds(rerenderCurrentRoute);
 
     }
 

@@ -104,6 +104,21 @@ Uploading overlapping CSV exports is safe — each round has a stable id
 (User ID + start timestamp), and rounds already imported are shown as "Ya
 importado" and skipped.
 
+The same upload also scans **every** row's `Comment` column (not just
+`LOCATION_AUDIT` rows) for two things: comments containing "DAMAGE",
+"BROKEN", or "ISSUE" become **Trailer Damage** records, and comments
+containing "Work ID" become **Work ID** records — each tagged with the
+trailer number (Vehicle # from the CSV, falling back to License Plate),
+position (Location), and the Berlin date/time of that row. These import
+automatically (no per-row selection needed) and are deduplicated by content,
+so re-uploading an overlapping export doesn't create duplicates.
+
+The Dashboard's **Trailer Damage** and **Work IDs** cards count today's
+records from these two collections specifically — not from issues logged
+manually through the in-app audit form (those still show separately under
+"Issues Found Today"). Clicking either card, or the **Audits** card, opens a
+detail list — the click targets are anywhere on the card.
+
 ## Known limitations
 
 - **Brief flicker on load** — the very first render happens before Firebase

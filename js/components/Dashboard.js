@@ -1,10 +1,19 @@
 import { KpiCards } from "./kpiCards.js";
 import { ShiftCompliancePanel } from "./ShiftCompliancePanel.js";
 import { IssueBadge } from "./badge.js";
-import { getDashboardStats } from "../services/DashboardService.js";
+import { Modal } from "./modal.js";
+import { Table } from "./table.js";
+import {
+    getDashboardStats,
+    getAuditsToday,
+    getTrailerDamagesToday,
+    getWorkIdsToday
+} from "../services/DashboardService.js";
 import { getActiveSession, getAllEntries } from "../services/AuditSessionService.js";
 import { navigate } from "../router.js";
 import { todayString } from "../constants.js";
+
+const modal = new Modal();
 
 export function Dashboard() {
 
@@ -75,5 +84,110 @@ export function initDashboard() {
         button.addEventListener("click", () => navigate("audit-session"));
 
     }
+
+    document.querySelectorAll("[data-kpi-card]").forEach(card => {
+
+        card.addEventListener("click", () => openKpiDetail(card.dataset.kpiCard));
+
+    });
+
+}
+
+function openKpiDetail(cardId) {
+
+    if (cardId === "audits") {
+
+        showAuditsModal();
+
+    } else if (cardId === "damages") {
+
+        showDamagesModal();
+
+    } else if (cardId === "workids") {
+
+        showWorkIdsModal();
+
+    }
+
+}
+
+function showAuditsModal() {
+
+    const audits = getAuditsToday();
+
+    const table = Table({
+
+        columns: [
+            { label: "Login", key: "ym" },
+            { label: "Fecha", key: "date" },
+            { label: "Turno", key: "shift" }
+        ],
+
+        rows: audits,
+
+        emptyMessage: "No hay audits registrados hoy."
+
+    });
+
+    modal.open(`
+        <h2 class="modal-title">Audits — Hoy</h2>
+        <div class="audit-table-wrapper" style="margin-top:16px;">
+            ${table}
+        </div>
+    `);
+
+}
+
+function showDamagesModal() {
+
+    const damages = getTrailerDamagesToday();
+
+    const table = Table({
+
+        columns: [
+            { label: "Trailer", key: "trailerNumber" },
+            { label: "Posición", key: "position" },
+            { label: "Razón", key: "comment" }
+        ],
+
+        rows: damages,
+
+        emptyMessage: "No hay Trailer Damage registrado hoy."
+
+    });
+
+    modal.open(`
+        <h2 class="modal-title">Trailer Damage — Hoy</h2>
+        <div class="audit-table-wrapper" style="margin-top:16px;">
+            ${table}
+        </div>
+    `);
+
+}
+
+function showWorkIdsModal() {
+
+    const workIds = getWorkIdsToday();
+
+    const table = Table({
+
+        columns: [
+            { label: "Work ID", key: "comment" },
+            { label: "Trailer", key: "trailerNumber" },
+            { label: "Posición", key: "position" }
+        ],
+
+        rows: workIds,
+
+        emptyMessage: "No hay Work IDs registrados hoy."
+
+    });
+
+    modal.open(`
+        <h2 class="modal-title">Work IDs — Hoy</h2>
+        <div class="audit-table-wrapper" style="margin-top:16px;">
+            ${table}
+        </div>
+    `);
 
 }

@@ -1,8 +1,12 @@
-import { parseCsvFile, extractAuditRounds } from "../services/ImportService.js";
+import { parseCsvFile, extractAuditRounds, extractTrailerDamages, extractWorkIds } from "../services/ImportService.js";
 import { importSession, isImportKeyUsed } from "../services/AuditSessionService.js";
+import { importTrailerDamage } from "../services/TrailerDamageService.js";
+import { importWorkId } from "../services/WorkIdService.js";
 import { Table } from "./table.js";
 
 let detectedRounds = [];
+let detectedDamages = [];
+let detectedWorkIds = [];
 
 export function ImportPage() {
 
@@ -12,7 +16,7 @@ export function ImportPage() {
 
             <div class="dashboard__header">
                 <h2 class="dashboard__title">Import Location Audits</h2>
-                <p class="dashboard__subtitle">Subí el CSV de eventos (Valet) para registrar como audit las rondas hechas fuera de esta app.</p>
+                <p class="dashboard__subtitle">Subí el CSV de eventos (Valet) para registrar audits, Trailer Damage y Work IDs.</p>
             </div>
 
             <div class="dashboard__panel dashboard__panel--narrow">
@@ -51,16 +55,18 @@ export function initImportPage() {
             const rows = await parseCsvFile(file);
 
             detectedRounds = extractAuditRounds(rows);
+            detectedDamages = extractTrailerDamages(rows);
+            detectedWorkIds = extractWorkIds(rows);
 
-            if (detectedRounds.length === 0) {
+            if (detectedRounds.length === 0 && detectedDamages.length === 0 && detectedWorkIds.length === 0) {
 
-                setStatus("No se encontraron filas LOCATION_AUDIT en este archivo.");
+                setStatus("No se encontraron audits, Trailer Damage ni Work IDs en este archivo.");
                 document.getElementById("importPreviewContainer").innerHTML = "";
                 return;
 
             }
 
-            setStatus(`${detectedRounds.length} ronda(s) detectada(s). Revisá y confirmá cuáles importar.`);
+            setStatus(`${detectedRounds.length} ronda(s) de audit, ${detectedDamages.length} Trailer Damage, ${detectedWorkIds.length} Work ID detectados. Revisá y confirmá.`);
 
             renderPreview();
 
@@ -76,9 +82,9 @@ export function initImportPage() {
 
     // The page can be re-rendered mid-import (the live data subscription
     // re-renders the current route after every successful write) — this
-    // restores the preview instead of losing it, since detectedRounds
-    // itself lives in module scope and survives the DOM being replaced.
-    if (detectedRounds.length > 0) {
+    // restores the preview instead of losing it, since the detected
+    // arrays live in module scope and survive the DOM being replaced.
+    if (detectedRounds.length > 0 || detectedDamages.length > 0 || detectedWorkIds.length > 0) {
 
         renderPreview();
 
@@ -108,7 +114,7 @@ function renderPreview() {
 
     }));
 
-    const table = Table({
+    const roundsTable = Table({
 
         columns: [
 
@@ -129,15 +135,26 @@ function renderPreview() {
 
         rows,
 
-        emptyMessage: "No hay rondas para mostrar."
+        emptyMessage: "No hay rondas de audit para mostrar."
 
     });
 
     container.innerHTML = `
 
-        <div class="audit-table-wrapper" style="margin-top:24px;">
-            ${table}
+        <div class="dashboard__panel" style="margin-top:24px;">
+            <div class="dashboard__panel-header">
+                <span class="dashboard__panel-title">Rondas de Audit</span>
+                <span class="dashboard__panel-subtitle">Elegí cuáles importar — las ya importadas se saltan solas.</span>
+            </div>
         </div>
+
+        <div class="audit-table-wrapper" style="margin-top:8px;">
+            ${roundsTable}
+        </div>
+
+        <p style="color:var(--color-text-muted); font-size:var(--text-sm); margin-top:16px;">
+            Trailer Damage y Work IDs detectados se importan automáticamente al confirmar (${detectedDamages.length} Trailer Damage, ${detectedWorkIds.length} Work ID) — no hace falta seleccionarlos, no se duplican si ya estaban importados.
+        </p>
 
         <div style="margin-top:16px;">
             <button class="btn btn-primary" id="confirmImportButton">Importar seleccionados</button>
@@ -158,17 +175,19 @@ async function handleConfirmImport() {
 
     const roundsToImport = detectedRounds.filter(round => selectedKeys.includes(round.importKey));
 
-    if (roundsToImport.length === 0) {
+    const totalToImport = roundsToImport.length + detectedDamages.length + detectedWorkIds.length;
 
-        setStatus("No seleccionaste ninguna ronda para importar.");
+    if (totalToImport === 0) {
+
+        setStatus("No hay nada para importar.");
 
         return;
 
     }
 
-    setStatus(`Importando ${roundsToImport.length} ronda(s)...`);
+    setStatus(`Importando ${roundsToImport.length} ronda(s), ${detectedDamages.length} Trailer Damage, ${detectedWorkIds.length} Work ID...`);
 
-    let imported = 0;
+    let importedRounds = 0;
 
     for (const round of roundsToImport) {
 
@@ -186,7 +205,7 @@ async function handleConfirmImport() {
 
             });
 
-            if (result) imported += 1;
+            if (result) importedRounds += 1;
 
         } catch (error) {
 
@@ -196,7 +215,35 @@ async function handleConfirmImport() {
 
     }
 
-    setStatus(`${imported} audit(s) importado(s) correctamente.`);
+    for (const damage of detectedDamages) {
+
+        try {
+
+            await importTrailerDamage(damage);
+
+        } catch (error) {
+
+            console.error("Failed to import trailer damage:", damage.recordKey, error);
+
+        }
+
+    }
+
+    for (const workId of detectedWorkIds) {
+
+        try {
+
+            await importWorkId(workId);
+
+        } catch (error) {
+
+            console.error("Failed to import work id:", workId.recordKey, error);
+
+        }
+
+    }
+
+    setStatus(`Listo: ${importedRounds} audit(s), ${detectedDamages.length} Trailer Damage, ${detectedWorkIds.length} Work ID procesados.`);
 
     renderPreview();
 

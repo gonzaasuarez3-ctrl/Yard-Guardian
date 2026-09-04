@@ -3,31 +3,39 @@ export function KpiCards(stats) {
     const cards = [
 
         {
+            id: "audits",
             icon: "clipboard-check",
-            title: "Audits Today",
+            title: "Audits",
             value: `${stats.auditsToday.value}/${stats.auditsToday.target}`,
-            color: stats.auditsToday.value >= stats.auditsToday.target ? "green" : "orange"
+            color: stats.auditsToday.value >= stats.auditsToday.target ? "green" : "orange",
+            clickable: true
         },
 
         {
+            id: "issues",
             icon: "alert-triangle",
             title: "Issues Found Today",
             value: stats.issuesToday.value,
-            color: "orange"
+            color: "orange",
+            clickable: false
         },
 
         {
+            id: "damages",
             icon: "truck",
-            title: "Trailer Damages Today",
+            title: "Trailer Damage",
             value: stats.damagesToday.value,
-            color: "red"
+            color: "red",
+            clickable: true
         },
 
         {
+            id: "workids",
             icon: "ticket",
-            title: "Work IDs Created Today",
+            title: "Work IDs",
             value: stats.workIdsToday.value,
-            color: "blue"
+            color: "blue",
+            clickable: true
         }
 
     ];
@@ -38,7 +46,10 @@ export function KpiCards(stats) {
 
             ${cards.map(card => `
 
-                <article class="kpi-card">
+                <article
+                    class="kpi-card${card.clickable ? " kpi-card--clickable" : ""}"
+                    ${card.clickable ? `data-kpi-card="${card.id}"` : ""}
+                >
 
                     <div class="kpi-card__top">
 

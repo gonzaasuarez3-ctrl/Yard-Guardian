@@ -147,3 +147,90 @@ function groupBy(items, keyFn) {
     }, {});
 
 }
+
+const DAMAGE_KEYWORDS = ["DAMAGE", "BROKEN", "ISSUE"];
+
+const WORKID_KEYWORDS = ["WORK ID", "WORKID"];
+
+function matchesKeywords(comment, keywords) {
+
+    if (!comment) return false;
+
+    const upper = comment.toUpperCase();
+
+    return keywords.some(keyword => upper.includes(keyword));
+
+}
+
+/**
+ * Both damage reports and Work IDs come from the free-text Comment
+ * column on ANY row (not just LOCATION_AUDIT ones) — Trailer Damage and
+ * Work ID reporting isn't tied to the audit-round grouping the way
+ * extractAuditRounds() is. Each matching row becomes its own record.
+ */
+function buildCsvRecord(row) {
+
+    const utcDate = parseUtcDate(row["Date UTC"] || "");
+
+    const validDate = !isNaN(utcDate.getTime());
+
+    const berlin = validDate ? toBerlinParts(utcDate) : null;
+
+    return {
+
+        trailerNumber: row["Vehicle #"] || row["License Plate"] || "Unknown",
+        position: row["Location"] || "",
+        comment: (row["Comment"] || "").trim(),
+        userId: row["User ID"] || "",
+
+        berlinDate: berlin?.date ?? null,
+        berlinTime: berlin?.time ?? null,
+
+        createdAt: validDate ? utcDate.toISOString() : new Date().toISOString(),
+
+        // Stable id from the row's own content — re-uploading an
+        // overlapping CSV export just overwrites the same record
+        // instead of duplicating it.
+        recordKey: buildRecordKey(row)
+
+    };
+
+}
+
+function buildRecordKey(row) {
+
+    const raw = [
+        row["Location"] || "",
+        row["Vehicle #"] || row["License Plate"] || "",
+        row["Date UTC"] || "",
+        (row["Comment"] || "").slice(0, 40)
+    ].join("_");
+
+    const sanitized = raw
+        .replace(/[\/\s]+/g, "-")
+        .replace(/[^a-zA-Z0-9\-_.:]/g, "")
+        .slice(0, 400);
+
+    return sanitized || `record-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+
+}
+
+export function extractTrailerDamages(rows) {
+
+    return rows
+
+        .filter(row => matchesKeywords(row["Comment"], DAMAGE_KEYWORDS))
+
+        .map(buildCsvRecord);
+
+}
+
+export function extractWorkIds(rows) {
+
+    return rows
+
+        .filter(row => matchesKeywords(row["Comment"], WORKID_KEYWORDS))
+
+        .map(buildCsvRecord);
+
+}

@@ -43,6 +43,7 @@
     color: var(--color-text);
     font-size: var(--text-sm);
     vertical-align: middle;
+    white-space: pre-line;
 }
 
 .audit-table tbody tr:hover {
@@ -184,6 +185,15 @@
 
 .dashboard__panel--narrow {
     max-width: 520px;
+}
+
+.kpi-card--clickable {
+    cursor: pointer;
+    transition: border-color 0.15s ease;
+}
+
+.kpi-card--clickable:hover {
+    border-color: var(--color-primary);
 }
 
 /* ==========================================================
