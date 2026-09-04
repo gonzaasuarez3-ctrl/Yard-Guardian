@@ -1,0 +1,117 @@
+/* ==========================================================
+   DASHBOARD
+========================================================== */
+
+.dashboard {
+
+    padding: 40px;
+
+}
+
+/* ==========================================================
+   HEADER
+========================================================== */
+
+.dashboard__header{
+
+    margin-bottom:40px;
+
+}
+
+.dashboard__title{
+
+    font-size:38px;
+
+    font-weight:700;
+
+    color:#ffffff;
+
+    margin-bottom:8px;
+
+}
+
+.dashboard__subtitle{
+
+    font-size:15px;
+
+    color:#94a3b8;
+
+}
+
+/* ==========================================================
+   GRID
+========================================================== */
+
+.dashboard__grid{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:24px;
+
+    margin-top:30px;
+
+}
+
+/* ==========================================================
+   PANELS
+========================================================== */
+
+.dashboard__panel{
+
+    background:#17212d;
+
+    border:1px solid rgba(255,255,255,.05);
+
+    border-radius:20px;
+
+    padding:28px;
+
+    min-height:360px;
+
+    transition:.25s;
+
+}
+
+.dashboard__panel:hover{
+
+    border-color:rgba(255,122,0,.30);
+
+    transform:translateY(-3px);
+
+}
+
+/* ==========================================================
+   PANEL HEADER
+========================================================== */
+
+.dashboard__panel-header{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:24px;
+
+}
+
+.dashboard__panel-title{
+
+    font-size:20px;
+
+    font-weight:700;
+
+    color:white;
+
+}
+
+.dashboard__panel-subtitle{
+
+    font-size:13px;
+
+    color:#94a3b8;
+
+}
