@@ -251,8 +251,7 @@ export function extractWorkIds(rows) {
 const ISSUE_EVENT_TYPES = [
     "CORRECTION-REMOVED",
     "CORRECTION-ADDED",
-    "CORRECTION-DISPLACED",
-    "CORRECTION-LOCATION"
+    "CORRECTION-DISPLACED"
 ];
 
 function normalizeEventType(value) {
@@ -267,11 +266,10 @@ function normalizeEventType(value) {
 }
 
 /**
- * "Issues" are Correction events (Removed/Added/Displaced/Location)
- * whose comment specifically mentions "Audit" — both conditions
- * required, not either. A Correction with an unrelated comment, or an
- * unrelated event type that happens to mention "Audit", doesn't count;
- * only the intersection does.
+ * "Issues" are any Correction event: Removed, Added, or Displaced.
+ * (Correction-Location is deliberately excluded — it's high-volume and
+ * mostly routine, unlike the other three.) No comment requirement
+ * anymore — every row of these three types counts.
  */
 export function extractIssues(rows) {
 
@@ -281,11 +279,7 @@ export function extractIssues(rows) {
 
             const eventType = normalizeEventType(row["Event Type"]);
 
-            const isCorrectionType = ISSUE_EVENT_TYPES.includes(eventType);
-
-            const mentionsAudit = matchesKeywords(row["Comment"], ["AUDIT"]);
-
-            return isCorrectionType && mentionsAudit;
+            return ISSUE_EVENT_TYPES.includes(eventType);
 
         })
 

@@ -153,15 +153,13 @@ export doesn't create duplicates.
 The Dashboard's **Trailer Damage**, **Work IDs**, and **Issues Found** cards
 count today's records from these collections specifically — not from issues
 logged manually through the in-app audit form (those live separately as
-entries within an audit session). "Issues Found" requires **both**: the row
-is a Correction event —
-`Correction-Removed`/`Correction-Added`/`Correction-Displaced`/`Correction-Location`
+entries within an audit session). "Issues Found" is any row whose Event
+Type is `Correction-Removed`, `Correction-Added`, or `Correction-Displaced`
 (matched regardless of hyphen/underscore/space style, e.g.
-`CORRECTION_LOCATION` also matches) — **and** its comment mentions "Audit".
-Either condition alone isn't enough; a routine Correction with an unrelated
-comment doesn't count, and a comment mentioning "Audit" on some other event
-type doesn't either. Clicking any KPI card opens a detail list — the click
-target is anywhere on the card.
+`CORRECTION_REMOVED` also matches) — no comment requirement.
+`Correction-Location` is deliberately excluded from this category; it's
+high-volume and mostly routine, unlike the other three. Clicking any KPI
+card opens a detail list — the click target is anywhere on the card.
 
 Re-importing does **not** clean up records from a previous import that no
 longer match the current logic — a matching-logic change only affects new
