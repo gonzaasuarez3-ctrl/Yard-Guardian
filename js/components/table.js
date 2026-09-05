@@ -16,10 +16,10 @@ export function Table({ columns, rows, emptyMessage = "No records yet." }) {
 
                 ${rows.length === 0
                     ? `<tr><td class="audit-table__empty" colspan="${columns.length}">${emptyMessage}</td></tr>`
-                    : rows.map(row => `
+                    : rows.map((row, index) => `
                         <tr>
                             ${columns.map(column => `
-                                <td>${column.render ? column.render(row) : (row[column.key] ?? "")}</td>
+                                <td>${column.render ? column.render(row, index) : (row[column.key] ?? "")}</td>
                             `).join("")}
                         </tr>
                     `).join("")

@@ -257,7 +257,12 @@ const ISSUE_EVENT_TYPES = [
 
 function normalizeEventType(value) {
 
-    return (value || "").toUpperCase().trim().replace(/[\s_]+/g, "-");
+    // Collapses any run of spaces, underscores, AND hyphens into a
+    // single hyphen — needed because "Correction - Added" (space,
+    // hyphen, space) would otherwise become "CORRECTION---ADDED"
+    // (each space separately turned into its own hyphen alongside the
+    // literal one), which never matches "CORRECTION-ADDED".
+    return (value || "").toUpperCase().trim().replace(/[\s_-]+/g, "-");
 
 }
 
@@ -284,12 +289,89 @@ export function extractIssues(rows) {
 
         })
 
+        .map(row => buildIssueRecord(row, rows));
+
+}
+
+/**
+ * A Correction row (e.g. "Correction - Removed") is sometimes logged
+ * with no location and no comment of its own — the row alone doesn't
+ * say where the vehicle was. When that happens, this walks backward
+ * through every other row for the same vehicle (matched by Vehicle #
+ * or License Plate, whichever the row has) to find its most recent
+ * prior location, and keeps a short trail of what led up to it so that
+ * can be reviewed later instead of just guessing from the bare event.
+ */
+function buildIssueRecord(row, allRows) {
+
+    const record = buildCsvRecord(row);
+
+    const originalPosition = record.position;
+
+    let resolvedPosition = originalPosition;
+    let positionInferred = false;
+    let precedingEvents = [];
+
+    if (!originalPosition) {
+
+        const issueDate = parseUtcDate(row["Date UTC"] || "");
+
+        precedingEvents = findPrecedingEvents(allRows, record.trailerNumber, issueDate);
+
+        const priorWithLocation = precedingEvents.find(event => event.location);
+
+        if (priorWithLocation) {
+
+            resolvedPosition = priorWithLocation.location;
+            positionInferred = true;
+
+        }
+
+    }
+
+    return {
+
+        ...record,
+
+        position: resolvedPosition,
+        positionInferred,
+        precedingEvents,
+
+        eventType: row["Event Type"] || ""
+
+    };
+
+}
+
+function findPrecedingEvents(rows, vehicleId, beforeDate, limit = 5) {
+
+    if (!vehicleId || isNaN(beforeDate.getTime())) return [];
+
+    return rows
+
+        .filter(row => {
+
+            const matchesVehicle = row["Vehicle #"] === vehicleId || row["License Plate"] === vehicleId;
+
+            if (!matchesVehicle) return false;
+
+            const rowDate = parseUtcDate(row["Date UTC"] || "");
+
+            return !isNaN(rowDate.getTime()) && rowDate < beforeDate;
+
+        })
+
         .map(row => ({
 
-            ...buildCsvRecord(row),
+            eventType: row["Event Type"] || "",
+            location: row["Location"] || "",
+            comment: (row["Comment"] || "").trim(),
+            dateUtc: row["Date UTC"] || ""
 
-            eventType: row["Event Type"] || ""
+        }))
 
-        }));
+        .sort((a, b) => new Date(b.dateUtc) - new Date(a.dateUtc))
+
+        .slice(0, limit);
 
 }

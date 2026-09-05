@@ -169,6 +169,16 @@ imports, not what's already saved. The Import page has a "Danger Zone" with
 a button per collection (Issues / Trailer Damage / Work IDs) to wipe it and
 start over from a fresh import.
 
+**When a Correction row has no location of its own** (some are logged with
+no location and no comment, e.g. a bare "Correction - Removed" at the
+Building/Yard level), the importer walks backward through every other row
+for that same vehicle (matched by Vehicle # or License Plate) to find its
+most recent prior location, and keeps the last 5 preceding events for that
+vehicle so they can be reviewed. In the Dashboard's Issues Found list, a
+resolved position shows an "inferred" tag, and a "View History" button opens
+the trail of events that led up to it. This only applies to Issues — Trailer
+Damage and Work ID records aren't backward-traced.
+
 ## Weekly Report
 
 A second view (sidebar → **Weekly**) rolls up the same data over a
