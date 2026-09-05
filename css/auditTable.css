@@ -224,6 +224,7 @@
 
 .needs-workid-row__action {
     flex-shrink: 0;
+    background: transparent;
     font-size: var(--text-sm);
     font-weight: var(--font-weight-medium);
     color: var(--color-primary);

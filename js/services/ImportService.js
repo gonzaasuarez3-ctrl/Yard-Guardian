@@ -126,11 +126,41 @@ function finalizeRound(round) {
 
 function parseUtcDate(value) {
 
-    // "2026-09-04 00:11:12" has no timezone marker, but the column is
-    // explicitly "Date UTC" — appending "Z" forces UTC interpretation.
-    // Without it, new Date(...) parses as the browser's local time,
-    // which would silently compute the wrong Berlin time and shift.
-    return new Date(value.replace(" ", "T") + "Z");
+    if (!value) return new Date(NaN);
+
+    const trimmed = value.trim();
+
+    // "2026-09-04 00:11:12" — no timezone marker, but the column is
+    // explicitly "Date UTC", so this is parsed as UTC explicitly rather
+    // than relying on new Date() (which would use the browser's local
+    // timezone for a string with no "Z"/offset).
+    const isoMatch = trimmed.match(/^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})(?::(\d{2}))?/);
+
+    if (isoMatch) {
+
+        const [, year, month, day, hour, minute, second] = isoMatch;
+
+        return new Date(Date.UTC(+year, +month - 1, +day, +hour, +minute, second ? +second : 0));
+
+    }
+
+    // "9/4/2026 17:53" or "9/4/2026 17:53:23" — some exports use
+    // month/day/year with no leading zeros and no seconds. Amazon's own
+    // UI renders dates month-first ("Sep 4, 2026"), so slash dates here
+    // are treated as M/D/YYYY, not D/M/YYYY.
+    const usMatch = trimmed.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})[ ,]+(\d{1,2}):(\d{2})(?::(\d{2}))?/);
+
+    if (usMatch) {
+
+        const [, month, day, year, hour, minute, second] = usMatch;
+
+        return new Date(Date.UTC(+year, +month - 1, +day, +hour, +minute, second ? +second : 0));
+
+    }
+
+    // Last resort — may parse as local time if the format is unexpected,
+    // but better than refusing outright.
+    return new Date(trimmed);
 
 }
 

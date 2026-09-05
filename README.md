@@ -177,6 +177,25 @@ resolved position shows an "inferred" tag, and a "View History" button opens
 the trail of events that led up to it. This only applies to Issues — Trailer
 Damage and Work ID records aren't backward-traced.
 
+Two things that look like missing data but are really just the CSV's
+content: (1) only rows *before* the Correction's timestamp are searched —
+rows for the same vehicle logged afterward don't answer "where was it
+before this happened," so a "View History" button correctly won't appear
+if the only other rows are later ones; (2) the search only sees what's in
+the uploaded file, so if the vehicle's earlier movements happened outside
+the CSV export's date range (even if they're visible on the Yard Management
+website itself), there's nothing here to find them with. Exporting a wider
+date range from Yard Management (several days back, not just "today")
+gives this more to work with.
+
+**Date format:** Amazon's export has been seen using two different `Date
+UTC` formats — `2026-09-04 00:11:12` and `9/4/2026 17:53` (US month/day,
+sometimes no seconds). Both are parsed correctly. If you imported real
+CSVs before this was handled, any record whose date didn't parse would
+have silently gotten `berlinDate: null` — invisible in every "today"/weekly
+view even though the record existed. Worth a clean re-import (Danger Zone
+→ clear → re-import the same files) once, to be sure nothing's stuck that way.
+
 ## Weekly Report
 
 A second view (sidebar → **Weekly**) rolls up the same data over a
