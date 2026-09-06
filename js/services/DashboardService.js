@@ -107,6 +107,42 @@ export function getDashboardStats(date = getCurrentBusinessDate()) {
 
 }
 
+export function getAuditsForWeek(weekStart = getWeekStart(getCurrentBusinessDate())) {
+
+    const dateSet = new Set(getWeekDates(weekStart));
+
+    return getSessions()
+
+        .filter(session => dateSet.has(session.date) && session.status === "Completed")
+
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+}
+
+export function getIssuesForWeek(weekStart = getWeekStart(getCurrentBusinessDate())) {
+
+    const dateSet = new Set(getWeekDates(weekStart));
+
+    return getIssues().filter(issue => dateSet.has(issue.berlinDate));
+
+}
+
+export function getDamagesForWeek(weekStart = getWeekStart(getCurrentBusinessDate())) {
+
+    const dateSet = new Set(getWeekDates(weekStart));
+
+    return getTrailerDamages().filter(damage => dateSet.has(damage.berlinDate));
+
+}
+
+export function getWorkIdsForWeek(weekStart = getWeekStart(getCurrentBusinessDate())) {
+
+    const dateSet = new Set(getWeekDates(weekStart));
+
+    return getWorkIds().filter(workId => dateSet.has(workId.berlinDate));
+
+}
+
 /**
  * One week's performance, Monday through Sunday. Reuses
  * getShiftCompliance per day rather than re-deriving the per-shift
@@ -131,8 +167,6 @@ export function getWeeklyStats(weekStart = getWeekStart(getCurrentBusinessDate()
 
     const totalTarget = SHIFTS.length * AUDITS_PER_SHIFT_TARGET * days.length;
 
-    const dateSet = new Set(days);
-
     return {
 
         weekStart,
@@ -145,11 +179,11 @@ export function getWeeklyStats(weekStart = getWeekStart(getCurrentBusinessDate()
 
         totalTarget,
 
-        totalIssues: getIssues().filter(issue => dateSet.has(issue.berlinDate)).length,
+        totalIssues: getIssuesForWeek(weekStart).length,
 
-        totalDamages: getTrailerDamages().filter(damage => dateSet.has(damage.berlinDate)).length,
+        totalDamages: getDamagesForWeek(weekStart).length,
 
-        totalWorkIds: getWorkIds().filter(workId => dateSet.has(workId.berlinDate)).length
+        totalWorkIds: getWorkIdsForWeek(weekStart).length
 
     };
 

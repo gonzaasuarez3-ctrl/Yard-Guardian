@@ -1,4 +1,16 @@
-import { getWeeklyStats } from "../services/DashboardService.js";
+import {
+    getWeeklyStats,
+    getAuditsForWeek,
+    getIssuesForWeek,
+    getDamagesForWeek,
+    getWorkIdsForWeek
+} from "../services/DashboardService.js";
+import {
+    showAuditsListModal,
+    showDamagesListModal,
+    showWorkIdsListModal,
+    showIssuesListModal
+} from "./detailModals.js";
 import { getWeekStart, shiftDateByDays, getCurrentBusinessDate, SHIFTS } from "../constants.js";
 import { navigate } from "../router.js";
 
@@ -8,6 +20,8 @@ export function WeeklyReportPage() {
 
     const stats = getWeeklyStats(currentWeekStart);
 
+    const periodLabel = formatWeekLabel(stats.weekStart, stats.weekEnd);
+
     return `
 
         <section class="dashboard">
@@ -16,7 +30,7 @@ export function WeeklyReportPage() {
 
                 <div>
                     <h2 class="dashboard__title">Weekly Report</h2>
-                    <p class="dashboard__subtitle">${formatWeekLabel(stats.weekStart, stats.weekEnd)}</p>
+                    <p class="dashboard__subtitle">${periodLabel}</p>
                 </div>
 
                 <div class="week-nav">
@@ -32,10 +46,10 @@ export function WeeklyReportPage() {
 
             <section class="kpi-grid">
 
-                ${weeklyCard("clipboard-check", "Audits", `${stats.totalAudits}/${stats.totalTarget}`, stats.totalAudits >= stats.totalTarget ? "green" : "orange")}
-                ${weeklyCard("alert-triangle", "Issues Found", stats.totalIssues, "orange")}
-                ${weeklyCard("truck", "Trailer Damage", stats.totalDamages, "red")}
-                ${weeklyCard("ticket", "Work IDs", stats.totalWorkIds, "blue")}
+                ${weeklyCard("audits", "clipboard-check", "Audits", `${stats.totalAudits}/${stats.totalTarget}`, stats.totalAudits >= stats.totalTarget ? "green" : "orange")}
+                ${weeklyCard("issues", "alert-triangle", "Issues Found", stats.totalIssues, "orange")}
+                ${weeklyCard("damages", "truck", "Trailer Damage", stats.totalDamages, "red")}
+                ${weeklyCard("workids", "ticket", "Work IDs", stats.totalWorkIds, "blue")}
 
             </section>
 
@@ -85,10 +99,10 @@ export function WeeklyReportPage() {
 
 }
 
-function weeklyCard(icon, title, value, color) {
+function weeklyCard(id, icon, title, value, color) {
 
     return `
-        <article class="kpi-card kpi-card--${color}">
+        <article class="kpi-card kpi-card--${color} kpi-card--clickable" data-kpi-card="${id}">
             <div class="kpi-card__top">
                 <div class="kpi-card__icon ${color}">
                     <i data-lucide="${icon}"></i>
@@ -142,5 +156,35 @@ export function initWeeklyReportPage() {
         navigate("weekly-report");
 
     });
+
+    document.querySelectorAll("[data-kpi-card]").forEach(card => {
+
+        card.addEventListener("click", () => openKpiDetail(card.dataset.kpiCard));
+
+    });
+
+}
+
+function openKpiDetail(cardId) {
+
+    const periodLabel = formatWeekLabel(currentWeekStart, shiftDateByDays(currentWeekStart, 6));
+
+    if (cardId === "audits") {
+
+        showAuditsListModal(getAuditsForWeek(currentWeekStart), periodLabel);
+
+    } else if (cardId === "damages") {
+
+        showDamagesListModal(getDamagesForWeek(currentWeekStart), periodLabel);
+
+    } else if (cardId === "workids") {
+
+        showWorkIdsListModal(getWorkIdsForWeek(currentWeekStart), periodLabel);
+
+    } else if (cardId === "issues") {
+
+        showIssuesListModal(getIssuesForWeek(currentWeekStart), periodLabel);
+
+    }
 
 }

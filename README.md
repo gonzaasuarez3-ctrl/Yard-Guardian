@@ -203,7 +203,24 @@ Monday–Sunday week instead of a single day: total audits vs. the week's
 target (3 shifts × 2 × 7 days = 42), total Issues/Trailer Damage/Work IDs,
 and a day-by-day × shift compliance grid. Use the arrows to page to a
 previous week — this is exactly the "how did last week go" check meant for
-a Friday review, but it works for any week, not just the current one.
+a Friday review, but it works for any week, not just the current one. Just
+like the Dashboard, every summary card is clickable and opens the same
+detail list (Issues Found even keeps the "View History" backward-trace),
+scoped to that week instead of just today — both pages share the same
+modal code (`js/components/detailModals.js`) so they can't drift apart.
+
+## Detecting a truncated CSV export
+
+Amazon's Event Report export appears to cap out around 3000 rows — asking
+for a wide date range on a busy yard can silently return only a few hours
+instead of the days you expected, with no error in the file itself. The
+Import page now shows the actual date range a file covers right after you
+select it, and flags it with a warning when the row count is near that cap
+**and** the covered span is under ~20 hours (a genuinely short intentional
+export usually isn't also sitting at the row limit). If you hit this,
+export in smaller day-by-day chunks and import each one — multiple imports
+don't create duplicates, so the full range accumulates correctly across
+several uploads.
 
 ## Needs Work ID
 

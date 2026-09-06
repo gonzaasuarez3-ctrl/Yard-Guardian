@@ -1,4 +1,4 @@
-import { parseCsvFile, extractAuditRounds, extractTrailerDamages, extractWorkIds, extractIssues } from "../services/ImportService.js";
+import { parseCsvFile, extractAuditRounds, extractTrailerDamages, extractWorkIds, extractIssues, getFileCoverageSummary } from "../services/ImportService.js";
 import { importSession, isImportKeyUsed } from "../services/AuditSessionService.js";
 import { importTrailerDamage, clearAllTrailerDamages } from "../services/TrailerDamageService.js";
 import { importWorkId, clearAllWorkIds } from "../services/WorkIdService.js";
@@ -29,6 +29,8 @@ export function ImportPage() {
                 </div>
 
                 <p id="importStatus" style="color:var(--color-text-muted); font-size:var(--text-sm); margin-top:8px;"></p>
+
+                <div id="coverageWarning"></div>
 
             </div>
 
@@ -72,6 +74,8 @@ export function initImportPage() {
         try {
 
             const rows = await parseCsvFile(file);
+
+            showCoverageSummary(rows);
 
             detectedRounds = extractAuditRounds(rows);
             detectedDamages = extractTrailerDamages(rows);
@@ -149,6 +153,53 @@ async function handleClear(label, clearFn) {
         console.error(`Failed to clear ${label}:`, error);
 
         setClearStatus(`Couldn't delete ${label} — check your connection and try again.`);
+
+    }
+
+}
+
+function showCoverageSummary(rows) {
+
+    const container = document.getElementById("coverageWarning");
+
+    if (!container) return;
+
+    const coverage = getFileCoverageSummary(rows);
+
+    if (!coverage.earliest) {
+
+        container.innerHTML = "";
+        return;
+
+    }
+
+    const format = date => date.toLocaleString("en-GB", {
+        timeZone: "UTC",
+        day: "numeric",
+        month: "short",
+        hour: "2-digit",
+        minute: "2-digit"
+    });
+
+    const rangeText = `Covers ${format(coverage.earliest)} – ${format(coverage.latest)} UTC (${coverage.rowCount} rows).`;
+
+    if (coverage.likelyTruncated) {
+
+        container.innerHTML = `
+            <p style="color:var(--color-warning); font-size:var(--text-sm); margin-top:8px;">
+                ⚠️ ${rangeText} This is close to Yard Management's row cap and covers less
+                than a day — if you asked for a wider range, it was likely cut short.
+                Try exporting in smaller chunks (e.g. one day at a time).
+            </p>
+        `;
+
+    } else {
+
+        container.innerHTML = `
+            <p style="color:var(--color-text-muted); font-size:var(--text-sm); margin-top:8px;">
+                ${rangeText}
+            </p>
+        `;
 
     }
 

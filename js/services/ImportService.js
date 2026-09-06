@@ -27,6 +27,55 @@ export function parseCsvFile(file) {
  * by time) by the same user, with no gap larger than gapMinutes
  * between one scan and the next.
  */
+const SUSPECTED_ROW_CAP = 2950;
+
+/**
+ * Amazon's Event Report export appears to cap out around 3000 rows —
+ * asking for a wide date range on a busy yard can silently return only
+ * a few hours before hitting that cap, with no error or indication in
+ * the file itself. This looks at what the file actually contains (not
+ * what the person intended to export) so the Import page can warn when
+ * it looks cut short instead of the person only noticing later because
+ * a week's worth of audits came back as one day.
+ */
+export function getFileCoverageSummary(rows) {
+
+    const validDates = rows
+
+        .map(row => parseUtcDate(row["Date UTC"] || ""))
+
+        .filter(date => !isNaN(date.getTime()));
+
+    if (validDates.length === 0) {
+
+        return { rowCount: rows.length, earliest: null, latest: null, spanHours: 0, likelyTruncated: false };
+
+    }
+
+    const earliest = new Date(Math.min(...validDates));
+
+    const latest = new Date(Math.max(...validDates));
+
+    const spanHours = (latest - earliest) / (1000 * 60 * 60);
+
+    return {
+
+        rowCount: rows.length,
+
+        earliest,
+        latest,
+        spanHours,
+
+        // Suspicious combination: hit (or nearly hit) the row cap AND
+        // covers noticeably less than a full day — a genuine short
+        // export (e.g. someone intentionally pulling 2 hours) wouldn't
+        // usually also be sitting right at the row limit.
+        likelyTruncated: rows.length >= SUSPECTED_ROW_CAP && spanHours < 20
+
+    };
+
+}
+
 export function extractAuditRounds(rows, gapMinutes = DEFAULT_GAP_MINUTES) {
 
     const auditRows = rows

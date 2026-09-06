@@ -1,7 +1,11 @@
 import { KpiCards } from "./kpiCards.js";
 import { ShiftCompliancePanel } from "./ShiftCompliancePanel.js";
-import { Modal } from "./modal.js";
-import { Table } from "./table.js";
+import {
+    showAuditsListModal,
+    showDamagesListModal,
+    showWorkIdsListModal,
+    showIssuesListModal
+} from "./detailModals.js";
 import {
     getDashboardStats,
     getAuditsToday,
@@ -10,8 +14,6 @@ import {
     getIssuesToday,
     getDamagesNeedingWorkId
 } from "../services/DashboardService.js";
-
-const modal = new Modal();
 
 // Where a Work ID ticket actually gets opened — shown next to any
 // damage that doesn't have one yet.
@@ -90,190 +92,20 @@ function openKpiDetail(cardId) {
 
     if (cardId === "audits") {
 
-        showAuditsModal();
+        showAuditsListModal(getAuditsToday(), "Today");
 
     } else if (cardId === "damages") {
 
-        showDamagesModal();
+        showDamagesListModal(getTrailerDamagesToday(), "Today");
 
     } else if (cardId === "workids") {
 
-        showWorkIdsModal();
+        showWorkIdsListModal(getWorkIdsToday(), "Today");
 
     } else if (cardId === "issues") {
 
-        showIssuesModal();
+        showIssuesListModal(getIssuesToday(), "Today");
 
     }
-
-}
-
-function showAuditsModal() {
-
-    const audits = getAuditsToday();
-
-    const table = Table({
-
-        columns: [
-            { label: "Login", key: "ym" },
-            { label: "Date", key: "date" },
-            { label: "Shift", key: "shift" }
-        ],
-
-        rows: audits,
-
-        emptyMessage: "No audits recorded today."
-
-    });
-
-    modal.open(`
-        <h2 class="modal-title">Audits — Today</h2>
-        <div class="audit-table-wrapper" style="margin-top:16px;">
-            ${table}
-        </div>
-    `);
-
-}
-
-function showDamagesModal() {
-
-    const damages = getTrailerDamagesToday();
-
-    const table = Table({
-
-        columns: [
-            { label: "Trailer", key: "trailerNumber" },
-            { label: "Position", key: "position" },
-            { label: "Reason", key: "comment" }
-        ],
-
-        rows: damages,
-
-        emptyMessage: "No Trailer Damage recorded today."
-
-    });
-
-    modal.open(`
-        <h2 class="modal-title">Trailer Damage — Today</h2>
-        <div class="audit-table-wrapper" style="margin-top:16px;">
-            ${table}
-        </div>
-    `);
-
-}
-
-function showWorkIdsModal() {
-
-    const workIds = getWorkIdsToday();
-
-    const table = Table({
-
-        columns: [
-            { label: "Work ID", key: "comment" },
-            { label: "Trailer", key: "trailerNumber" },
-            { label: "Position", key: "position" }
-        ],
-
-        rows: workIds,
-
-        emptyMessage: "No Work IDs recorded today."
-
-    });
-
-    modal.open(`
-        <h2 class="modal-title">Work IDs — Today</h2>
-        <div class="audit-table-wrapper" style="margin-top:16px;">
-            ${table}
-        </div>
-    `);
-
-}
-
-const historyModal = new Modal();
-
-function showIssuesModal() {
-
-    const issues = getIssuesToday();
-
-    const table = Table({
-
-        columns: [
-            { label: "Event", key: "eventType" },
-            { label: "Trailer", key: "trailerNumber" },
-            {
-                label: "Position",
-                render: row => row.positionInferred
-                    ? `${row.position || "—"} <span class="status-badge status-badge--other" style="margin-left:6px;">inferred</span>`
-                    : (row.position || "—")
-            },
-            { label: "Comment", key: "comment" },
-            {
-                label: "",
-                render: (row, index) => row.precedingEvents?.length
-                    ? `<button class="needs-workid-row__action" data-history-index="${index}">View History</button>`
-                    : ""
-            }
-        ],
-
-        rows: issues,
-
-        emptyMessage: "No issues recorded today."
-
-    });
-
-    modal.open(`
-        <h2 class="modal-title">Issues Found — Today</h2>
-        <div class="audit-table-wrapper" style="margin-top:16px;">
-            ${table}
-        </div>
-    `);
-
-    document.querySelectorAll("[data-history-index]").forEach(button => {
-
-        button.addEventListener("click", () => {
-
-            const issue = issues[Number(button.dataset.historyIndex)];
-
-            showIssueHistory(issue);
-
-        });
-
-    });
-
-}
-
-/**
- * Separate modal instance so this stacks on top of the Issues list
- * instead of replacing it — Modal.open() closes whatever that same
- * instance had open, so History needs its own instance to not close
- * the Issues modal underneath it.
- */
-function showIssueHistory(issue) {
-
-    const historyTable = Table({
-
-        columns: [
-            { label: "Event", key: "eventType" },
-            { label: "Location", render: row => row.location || "—" },
-            { label: "Comment", render: row => row.comment || "—" },
-            { label: "Date (UTC)", key: "dateUtc" }
-        ],
-
-        rows: issue.precedingEvents,
-
-        emptyMessage: "No earlier events found for this vehicle."
-
-    });
-
-    historyModal.open(`
-        <h2 class="modal-title">${issue.trailerNumber} — Prior Events</h2>
-        <p style="color:var(--color-text-muted); font-size:var(--text-sm); margin-top:4px;">
-            This Correction had no location of its own — most recent events for this
-            vehicle beforehand, newest first. Resolved position: <strong style="color:var(--color-text);">${issue.position || "—"}</strong>
-        </p>
-        <div class="audit-table-wrapper" style="margin-top:16px;">
-            ${historyTable}
-        </div>
-    `);
 
 }
